@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pasta Order System — Cornelly Restaurant Group</title>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    :root {
+      --green:   #1e3a2f;
+      --green2:  #2d5540;
+      --gold:    #c8a45a;
+      --gold-lt: #e8d5a3;
+      --cream:   #f7f3ec;
+      --white:   #ffffff;
+      --gray-lt: #f0ede8;
+      --gray:    #d4cfc8;
+      --text:    #2a2a22;
+      --text-lt: #6b6b5e;
+      --red:     #c0392b;
+      --green-ok:#2e7d52;
+      --radius:  10px;
+      --shadow:  0 2px 12px rgba(0,0,0,.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--green);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 64px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      font-size: 26px;
+      line-height: 1;
+    }
+    .brand-text h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: .4px;
+    }
+    .brand-text p {
+      font-size: 11px;
+      opacity: .65;
+      letter-spacing: .3px;
+    }
+    nav {
+      display: flex;
+      gap: 4px;
+    }
+    nav button {
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,.75);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      letter-spacing: .2px;
+    }
+    nav button:hover { background: rgba(255,255,255,.1); color: #fff; }
+    nav button.active { background: var(--gold); color: var(--green); font-weight: 700; }
+
+    /* ── MAIN LAYOUT ── */
+    main { max-width: 860px; margin: 0 auto; padding: 36px 24px 80px; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 4px;
+    }
+    .page-sub {
+      font-size: 13px;
+      color: var(--text-lt);
+      margin-bottom: 28px;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }
+    .card h2 {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--green2);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--gold-lt);
+    }
+
+    /* ── FORM GRID ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--text-lt);
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      border: 1.5px solid var(--gray);
+      border-radius: 7px;
+      padding: 10px 13px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--white);
+      transition: border-color .15s, box-shadow .15s;
+      outline: none;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--green2);
+      box-shadow: 0 0 0 3px rgba(45,85,64,.12);
+    }
+    .field textarea { resize: vertical; min-height: 80px; }
+
+    /* Cost display */
+    .cost-display {
+      background: var(--gray-lt);
+      border: 1.5px solid var(--gold-lt);
+      border-radius: 7px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cost-display span:first-child {
+      font-size: 13px;
+      color: var(--text-lt);
+      font-weight: 600;
+    }
+    .cost-display .cost-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--green);
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+      font-family: inherit;
+      letter-spacing: .2px;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-primary:hover { opacity: .88; }
+    .btn-gold { background: var(--gold); color: var(--green); }
+    .btn-gold:hover { opacity: .88; }
+    .btn-sm { padding: 7px 14px; font-size: 12px; }
+    .btn-danger { background: var(--red); color: #fff; }
+    .btn-danger:hover { opacity: .88; }
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--green2);
+      color: var(--green2);
+    }
+    .btn-outline:hover { background: var(--green2); color: #fff; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* ── TOAST NOTIFICATION ── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--green);
+      color: #fff;
+      padding: 13px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 20px rgba(0,0,0,.2);
+      opacity: 0;
+      transition: opacity .25s, transform .25s;
+      z-index: 999;
+      max-width: 400px;
+      text-align: center;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.error { background: var(--red); }
+    #toast.warning { background: #b07a00; }
+
+    /* ── PRODUCTS TABLE ── */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th {
+      background: var(--green);
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    th:first-child { border-radius: 7px 0 0 0; }
+    th:last-child  { border-radius: 0 7px 0 0; }
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--gray-lt);
+      color: var(--text);
+    }
+    tr:hover td { background: var(--gray-lt); }
+    tr:last-child td { border-bottom: none; }
+    .no-data td {
+      text-align: center;
+      color: var(--text-lt);
+      padding: 32px;
+      font-style: italic;
+    }
+    .no-data:hover td { background: transparent; }
+
+    /* ── ADD PRODUCT FORM ── */
+    .inline-form {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .inline-form .field { flex: 1; min-width: 160px; }
+
+    /* ── HISTORY FILTERS ── */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .filter-bar label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-lt);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      margin-right: 4px;
+    }
+    .period-btn {
+      border: 1.5px solid var(--gray);
+      background: var(--white);
+      color: var(--text-lt);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all .15s;
+      font-family: inherit;
+    }
+    .period-btn:hover { border-color: var(--green2); color: var(--green2); }
+    .period-btn.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+    .filter-bar input[type="date"] {
+      border: 1.5px solid var(--gray);
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      background: var(--white);
+    }
+    .filter-bar input[type="date"]:focus {
+      border-color: var(--green2);
+    }
+
+    /* Summary strip */
+    .summary-strip {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .summary-chip {
+      background: var(--green);
+      color: #fff;
+      border-radius: 8px;
+      padding: 10px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .summary-chip .chip-val {
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .summary-chip .chip-lbl {
+      font-size: 11px;
+      opacity: .7;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    /* ── SETTINGS ── */
+    .settings-info {
+      background: var(--gray-lt);
+      border-left: 4px solid var(--gold);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-lt);
+    }
+    .settings-info strong { color: var(--text); }
+    .settings-info ol { padding-left: 18px; margin-top: 8px; }
+    .settings-info li { margin-bottom: 4px; }
+    .settings-info a { color: var(--green2); }
+
+    .config-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .config-status.ok  { background: #e8f5ee; color: var(--green-ok); }
+    .config-status.bad { background: #fdecea; color: var(--red); }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      header { padding: 0 16px; height: auto; padding: 12px 16px; flex-direction: column; gap: 10px; }
+      nav { gap: 2px; }
+      nav button { padding: 7px 10px; font-size: 12px; }
+      main { padding: 20px 16px 60px; }
+      .card { padding: 20px 18px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .full { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="brand-icon">🍝</span>
+    <div class="brand-text">
+      <h1>Pasta Order System</h1>
+      <p>Cornelly Restaurant Group</p>
+    </div>
+  </div>
+  <nav>
+    <button id="nav-order"   class="active" onclick="showPage('order')">New Order</button>
+    <button id="nav-products"              onclick="showPage('products')">Products</button>
+    <button id="nav-history"               onclick="showPage('history')">Order History</button>
+    <button id="nav-settings"              onclick="showPage('settings')">Settings</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ══════════════════ ORDER FORM ══════════════════ -->
+  <section id="page-order" class="page active">
+    <div class="page-title">Place a Pasta Order</div>
+    <div class="page-sub">Orders are emailed to the production kitchen automatically on submission.</div>
+
+    <div class="card">
+      <h2>Order Details</h2>
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Order Date</label>
+          <input type="date" id="orderDate" />
+        </div>
+
+        <div class="field">
+          <label>Desired Delivery Date</label>
+          <select id="deliveryDate"></select>
+        </div>
+
+        <div class="field">
+          <label>Pasta Shape</label>
+          <select id="pastaShape" onchange="updateCost()">
+            <option value="">— Select a shape —</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Quantity (bags)</label>
+          <input type="number" id="quantity" min="1" step="1" placeholder="e.g. 10" oninput="updateCost()" />
+        </div>
+
+        <div class="field full">
+          <label>Special Notes</label>
+          <textarea id="notes" placeholder="Any special instructions, substitutions, or delivery notes…"></textarea>
+        </div>
+
+        <div class="field full">
+          <label>Estimated Order Cost</label>
+          <div class="cost-display">
+            <span>Price per bag × quantity</span>
+            <span class="cost-value" id="costDisplay">—</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="btn-row" style="margin-top:24px;">
+        <button class="btn btn-primary" id="submitBtn" onclick="submitOrder()">
+          📧 Submit Order &amp; Email Kitchen
+        </button>
+        <button class="btn btn-outline" onclick="resetOrderForm()">Clear</button>
+        <span id="submitStatus" style="font-size:13px; color:var(--text-lt);"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ PRODUCTS ══════════════════ -->
+  <section id="page-products" class="page">
+    <div class="page-title">Pasta Products</div>
+    <div class="page-sub">Manage available pasta shapes and their price per bag.</div>
+
+    <div class="card">
+      <h2>Add New Product</h2>
+      <div class="inline-form">
+        <div class="field" style="flex:2">
+          <label>Pasta Shape Name</label>
+          <input type="text" id="newProductName" placeholder="e.g. Tagliatelle, Rigatoni…" />
+        </div>
+        <div class="field" style="flex:1">
+          <label>Price per Bag ($)</label>
+          <input type="number" id="newProductPrice" min="0" step="0.01" placeholder="0.00" />
+        </div>
+        <button class="btn btn-gold" onclick="addProduct()" style="margin-bottom:1px;">+ Add Product</button>
+      </div>
+
+      <div class="table-wrap">
+        <table id="productsTable">
+          <thead>
+            <tr>
+              <th>Pasta Shape</th>
+              <th>Price per Bag</th>
+              <th>Added</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="productsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ HISTORY ══════════════════ -->
+  <section id="page-history" class="page">
+    <div class="page-title">Order History</div>
+    <div class="page-sub">Filter and review all pasta orders placed through this system.</div>
+
+    <div class="card">
+      <h2>Filter Orders</h2>
+      <div class="filter-bar">
+        <label>View by:</label>
+        <button class="period-btn active" data-period="all"   onclick="setPeriod('all')">All Time</button>
+        <button class="period-btn"        data-period="day"   onclick="setPeriod('day')">Day</button>
+        <button class="period-btn"        data-period="week"  onclick="setPeriod('week')">Week</button>
+        <button class="period-btn"        data-period="month" onclick="setPeriod('month')">Month</button>
+        <button class="period-btn"        data-period="year"  onclick="setPeriod('year')">Year</button>
+        <input type="date" id="historyDatePicker" onchange="renderHistory()" style="display:none;" />
+      </div>
+
+      <div class="summary-strip" id="summarySec">
+        <div class="summary-chip">
+          <span class="chip-val" id="sumOrders">—</span>
+          <span class="chip-lbl">Orders</span>
+        </div>
+        <div class="summary-chip">
+          <span class="chip-val" id="sumBags">—</span>
+          <span class="chip-lbl">Bags Ordered</span>
+        </div>
+        <div class="summary-chip">
+          <span class="chip-val" id="sumCost">—</span>
+          <span class="chip-lbl">Total Spend</span>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Order Date</th>
+              <th>Delivery Date</th>
+              <th>Pasta Shape</th>
+              <th>Bags</th>
+              <th>Price/Bag</th>
+              <th>Total Cost</th>
+              <th>Notes</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ SETTINGS ══════════════════ -->
+  <section id="page-settings" class="page">
+    <div class="page-title">Settings</div>
+    <div class="page-sub">Configure EmailJS so the system can send order emails to the production kitchen.</div>
+
+    <div class="card">
+      <h2>Email Configuration (EmailJS)</h2>
+
+      <div class="settings-info">
+        <strong>One-time setup — takes about 5 minutes:</strong>
+        <ol>
+          <li>Go to <a href="https://www.emailjs.com" target="_blank">emailjs.com</a> and create a free account.</li>
+          <li>In EmailJS → <strong>Email Services</strong>, add your email provider (Gmail, Outlook, etc.) and copy the <strong>Service ID</strong>.</li>
+          <li>In EmailJS → <strong>Email Templates</strong>, click <strong>Create New Template</strong>. Set the <strong>To Email</strong> field to <code>doughordering@cornellyqueenanne.com</code>. Use the variables below in the template body, then save and copy the <strong>Template ID</strong>.</li>
+          <li>In EmailJS → <strong>Account → General</strong>, copy your <strong>Public Key</strong>.</li>
+          <li>Paste all three values below and click Save.</li>
+        </ol>
+        <div style="margin-top:12px; padding:10px 14px; background:var(--white); border-radius:6px; font-size:12px; font-family:monospace; line-height:1.8; color:var(--text);">
+          Available template variables:<br>
+          <strong>{{order_date}}</strong> &nbsp;{{delivery_date}}&nbsp; {{pasta_shape}}&nbsp; {{quantity}}&nbsp; {{price_per_bag}}&nbsp; {{total_cost}}&nbsp; {{notes}}&nbsp; {{location}}
+        </div>
+      </div>
+
+      <div id="configStatusBadge" class="config-status bad">⚠ EmailJS not configured</div>
+
+      <div class="form-grid" style="max-width:560px;">
+        <div class="field full">
+          <label>EmailJS Public Key</label>
+          <input type="text" id="cfg-pubkey" placeholder="e.g. aBcDeFgH1234567890" />
+        </div>
+        <div class="field">
+          <label>Service ID</label>
+          <input type="text" id="cfg-service" placeholder="e.g. service_abc123" />
+        </div>
+        <div class="field">
+          <label>Template ID</label>
+          <input type="text" id="cfg-template" placeholder="e.g. template_xyz789" />
+        </div>
+        <div class="field full">
+          <label>Your Restaurant Location (shown in email)</label>
+          <input type="text" id="cfg-location" placeholder="e.g. Cornelly Queen Anne" value="Cornelly Queen Anne" />
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:20px;">
+        <button class="btn btn-primary" onclick="saveConfig()">Save Settings</button>
+        <button class="btn btn-outline" onclick="testEmail()">Send Test Email</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Email Template — Suggested Body</h2>
+      <div style="font-size:13px; color:var(--text-lt); margin-bottom:12px;">
+        Copy this into your EmailJS template body. Paste as-is; EmailJS fills in the <code>{{variables}}</code> automatically.
+      </div>
+      <div style="background:var(--gray-lt); border-radius:8px; padding:18px 20px; font-family:monospace; font-size:13px; line-height:1.9; white-space:pre-wrap; color:var(--text);">Hi Production Kitchen,
+
+A new pasta order has been placed from {{location}}.
+
+Order Date:     {{order_date}}
+Delivery Date:  {{delivery_date}}
+
+Pasta Shape:    {{pasta_shape}}
+Quantity:       {{quantity}} bags
+Price per Bag:  ${{price_per_bag}}
+Total Cost:     ${{total_cost}}
+
+Special Notes:
+{{notes}}
+
+Please confirm receipt by replying to this email.
+
+Thank you,
+{{location}}</div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button class="btn btn-sm btn-outline" onclick="copyTemplate()">📋 Copy Template</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Data Management</h2>
+      <p style="font-size:13px; color:var(--text-lt); margin-bottom:16px;">
+        All order history and product data is stored locally in your browser. Clearing browser data will erase it.
+        Export a backup before clearing.
+      </p>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="exportData()">⬇ Export Data (JSON)</button>
+        <button class="btn btn-danger btn-sm" onclick="clearAllData()">🗑 Clear All Data</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────
+//  DATA HELPERS
+// ─────────────────────────────────────────
+function getProducts() { return JSON.parse(localStorage.getItem('pasta_products') || '[]'); }
+function saveProducts(arr) { localStorage.setItem('pasta_products', JSON.stringify(arr)); }
+
+function getOrders() { return JSON.parse(localStorage.getItem('pasta_orders') || '[]'); }
+function saveOrders(arr) { localStorage.setItem('pasta_orders', JSON.stringify(arr)); }
+
+function getConfig() { return JSON.parse(localStorage.getItem('pasta_config') || '{}'); }
+function saveConfig2(obj) { localStorage.setItem('pasta_config', JSON.stringify(obj)); }
+
+// ─────────────────────────────────────────
+//  TOAST
+// ─────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 3800);
+}
+
+// ─────────────────────────────────────────
+//  NAVIGATION
+// ──────────────────────────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'history') renderHistory();
+  if (name === 'products') renderProducts();
+  if (name === 'settings') loadConfig();
+  if (name === 'order') populateDeliveryDates();
+}
+
+// ─────────────────────────────────────────
+//  DATE UTILITIES
+// ─────────────────────────────────────────
+function todayStr() {
+  const d = new Date();
+  return d.toISOString().slice(0, 10);
+}
+
+function formatDisplay(iso) {
+  // iso = "YYYY-MM-DD"
+  const [y, m, d] = iso.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  return dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function populateDeliveryDates() {
+  const sel = document.getElementById('deliveryDate');
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+  sel.innerHTML = '';
+  for (let i = 0; i <= 21; i++) {
+    const d = new Date(today); d.setDate(today.getDate() + i);
+    const iso = d.toISOString().slice(0,10);
+    const opt = document.createElement('option');
+    opt.value = iso;
+    if (i === 0) opt.text = 'Today — ' + d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+    else if (i === 1) opt.text = 'Tomorrow — ' + d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+    else opt.text = d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+    sel.appendChild(opt);
+  }
+  // default to tomorrow
+  if (sel.options.length > 1) sel.selectedIndex = 1;
+}
+
+// ─────────────────────────────────────────
+//  ORDER FORM
+// ─────────────────────────────────────────
+function initOrderForm() {
+  document.getElementById('orderDate').value = todayStr();
+  populateDeliveryDates();
+  refreshShapeDropdown();
+}
+
+function refreshShapeDropdown() {
+  const sel = document.getElementById('pastaShape');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">— Select a shape —</option>';
+  getProducts().forEach(p => {
+    const o = document.createElement('option');
+    o.value = p.name;
+    o.dataset.price = p.price;
+    o.text = p.name + ' — $' + parseFloat(p.price).toFixed(2) + '/bag';
+    sel.appendChild(o);
+  });
+  if (prev) sel.value = prev;
+  updateCost();
+}
+
+function getSelectedPrice() {
+  const sel = document.getElementById('pastaShape');
+  const opt = sel.options[sel.selectedIndex];
+  return opt && opt.dataset.price ? parseFloat(opt.dataset.price) : null;
+}
+
+function updateCost() {
+  const price = getSelectedPrice();
+  const qty = parseInt(document.getElementById('quantity').value, 10);
+  const disp = document.getElementById('costDisplay');
+  if (price !== null && qty > 0) {
+    disp.textContent = '$' + (price * qty).toFixed(2);
+  } else {
+    disp.textContent = '—';
+  }
+}
+
+function resetOrderForm() {
+  document.getElementById('orderDate').value = todayStr();
+  populateDeliveryDates();
+  document.getElementById('pastaShape').value = '';
+  document.getElementById('quantity').value = '';
+  document.getElementById('notes').value = '';
+  updateCost();
+}
+
+async function submitOrder() {
+  const orderDate    = document.getElementById('orderDate').value;
+  const deliverySel  = document.getElementById('deliveryDate');
+  const deliveryVal  = deliverySel.value;
+  const deliveryText = deliverySel.options[deliverySel.selectedIndex]?.text || deliveryVal;
+  const shape        = document.getElementById('pastaShape').value;
+  const qty          = parseInt(document.getElementById('quantity').value, 10);
+  const notes        = document.getElementById('notes').value.trim();
+  const price        = getSelectedPrice();
+
+  // Validation
+  if (!orderDate)      { showToast('Please select an order date.', 'error'); return; }
+  if (!deliveryVal)    { showToast('Please select a delivery date.', 'error'); return; }
+  if (!shape)          { showToast('Please select a pasta shape.', 'error'); return; }
+  if (!qty || qty < 1) { showToast('Please enter a valid quantity.', 'error'); return; }
+
+  const totalCost = (price * qty).toFixed(2);
+
+  const cfg = getConfig();
+  const btn = document.getElementById('submitBtn');
+  const status = document.getElementById('submitStatus');
+
+  // Save order to history
+  const order = {
+    id: Date.now(),
+    orderDate,
+    deliveryDate: deliveryVal,
+    deliveryText,
+    shape,
+    quantity: qty,
+    pricePerBag: price,
+    totalCost: parseFloat(totalCost),
+    notes: notes || '—',
+    submittedAt: new Date().toISOString()
+  };
+  const orders = getOrders();
+  orders.unshift(order);
+  saveOrders(orders);
+
+  // Send email if configured
+  if (cfg.pubkey && cfg.service && cfg.template) {
+    btn.disabled = true;
+    status.textContent = 'Sending email…';
+    try {
+      emailjs.init(cfg.pubkey);
+      await emailjs.send(cfg.service, cfg.template, {
+        order_date:    formatDisplay(orderDate),
+        delivery_date: deliveryText,
+        pasta_shape:   shape,
+        quantity:      qty,
+        price_per_bag: price.toFixed(2),
+        total_cost:    totalCost,
+        notes:         notes || 'None',
+        location:      cfg.location || 'Cornelly Restaurant Group'
+      });
+      showToast('✅ Order saved & email sent to production kitchen!');
+      status.textContent = '';
+    } catch(err) {
+      console.error(err);
+      showToast('Order saved, but email failed: ' + (err.text || err.message || 'unknown error'), 'error');
+      status.textContent = '';
+    }
+    btn.disabled = false;
+  } else {
+    showToast('⚠ Order saved locally. Configure EmailJS in Settings to send emails.', 'warning');
+  }
+
+  resetOrderForm();
+}
+
+// ─────────────────────────────────────────
+//  PRODUCTS
+// ─────────────────────────────────────────
+function addProduct() {
+  const name  = document.getElementById('newProductName').value.trim();
+  const price = parseFloat(document.getElementById('newProductPrice').value);
+
+  if (!name)              { showToast('Please enter a pasta shape name.', 'error'); return; }
+  if (isNaN(price) || price < 0) { showToast('Please enter a valid price.', 'error'); return; }
+
+  const products = getProducts();
+  if (products.find(p => p.name.toLowerCase() === name.toLowerCase())) {
+    showToast('A product with that name already exists.', 'error'); return;
+  }
+
+  products.push({ name, price, addedAt: new Date().toISOString() });
+  saveProducts(products);
+  document.getElementById('newProductName').value = '';
+  document.getElementById('newProductPrice').value = '';
+  renderProducts();
+  refreshShapeDropdown();
+  showToast('Product added: ' + name);
+}
+
+function deleteProduct(name) {
+  if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+  saveProducts(getProducts().filter(p => p.name !== name));
+  renderProducts();
+  refreshShapeDropdown();
+  showToast(name + ' removed.');
+}
+
+function editProduct(name) {
+  const products = getProducts();
+  const p = products.find(x => x.name === name);
+  if (!p) return;
+  const newPrice = prompt('New price per bag for "' + name + '":', p.price);
+  if (newPrice === null) return;
+  const val = parseFloat(newPrice);
+  if (isNaN(val) || val < 0) { showToast('Invalid price.', 'error'); return; }
+  p.price = val;
+  saveProducts(products);
+  renderProducts();
+  refreshShapeDropdown();
+  showToast('Price updated for ' + name);
+}
+
+function renderProducts() {
+  const tbody = document.getElementById('productsBody');
+  const products = getProducts();
+  if (!products.length) {
+    tbody.innerHTML = '<tr class="no-data"><td colspan="4">No products yet. Add your first pasta shape above.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = products.map(p => `
+    <tr>
+      <td><strong>${esc(p.name)}</strong></td>
+      <td>$${parseFloat(p.price).toFixed(2)}</td>
+      <td style="color:var(--text-lt);font-size:12px;">${new Date(p.addedAt).toLocaleDateString()}</td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="editProduct('${esc(p.name)}')">Edit Price</button>
+        <button class="btn btn-sm btn-danger" style="margin-left:6px;" onclick="deleteProduct('${esc(p.name)}')">Remove</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ─────────────────────────────────────────
+//  HISTORY
+// ─────────────────────────────────────────
+let currentPeriod = 'all';
+
+function setPeriod(period) {
+  currentPeriod = period;
+  document.querySelectorAll('.period-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.period === period);
+  });
+  const picker = document.getElementById('historyDatePicker');
+  picker.style.display = (period !== 'all') ? 'inline-block' : 'none';
+  if (period !== 'all' && !picker.value) picker.value = todayStr();
+  renderHistory();
+}
+
+function getFilteredOrders() {
+  const all = getOrders();
+  if (currentPeriod === 'all') return all;
+
+  const picker = document.getElementById('historyDatePicker');
+  const ref = picker.value ? new Date(picker.value + 'T00:00:00') : new Date();
+  ref.setHours(0,0,0,0);
+
+  return all.filter(o => {
+    const d = new Date(o.orderDate + 'T00:00:00');
+    if (currentPeriod === 'day') {
+      return d.toDateString() === ref.toDateString();
+    } else if (currentPeriod === 'week') {
+      const startOfWeek = new Date(ref);
+      startOfWeek.setDate(ref.getDate() - ref.getDay());
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      return d >= startOfWeek && d <= endOfWeek;
+    } else if (currentPeriod === 'month') {
+      return d.getMonth() === ref.getMonth() && d.getFullYear() === ref.getFullYear();
+    } else if (currentPeriod === 'year') {
+      return d.getFullYear() === ref.getFullYear();
+    }
+    return true;
+  });
+}
+
+function renderHistory() {
+  const orders = getFilteredOrders();
+  const tbody = document.getElementById('historyBody');
+  const totalBags = orders.reduce((s, o) => s + o.quantity, 0);
+  const totalCost = orders.reduce((s, o) => s + o.totalCost, 0);
+
+  document.getElementById('sumOrders').textContent = orders.length;
+  document.getElementById('sumBags').textContent   = totalBags;
+  document.getElementById('sumCost').textContent   = '$' + totalCost.toFixed(2);
+
+  if (!orders.length) {
+    tbody.innerHTML = '<tr class="no-data"><td colspan="8">No orders found for this period.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = orders.map(o => `
+    <tr>
+      <td>${formatDisplay(o.orderDate)}</td>
+      <td>${esc(o.deliveryText || o.deliveryDate)}</td>
+      <td><strong>${esc(o.shape)}</strong></td>
+      <td>${o.quantity}</td>
+      <td>$${parseFloat(o.pricePerBag).toFixed(2)}</td>
+      <td><strong>$${parseFloat(o.totalCost).toFixed(2)}</strong></td>
+      <td style="font-size:12px;color:var(--text-lt);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.notes)}">${esc(o.notes)}</td>
+      <td>
+        <button class="btn btn-sm btn-danger" onclick="deleteOrder(${o.id})">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function deleteOrder(id) {
+  if (!confirm('Delete this order record?')) return;
+  saveOrders(getOrders().filter(o => o.id !== id));
+  renderHistory();
+  showToast('Order record deleted.');
+}
+
+// ─────────────────────────────────────────
+//  SETTINGS
+// ─────────────────────────────────────────
+function loadConfig() {
+  const cfg = getConfig();
+  document.getElementById('cfg-pubkey').value   = cfg.pubkey   || '';
+  document.getElementById('cfg-service').value  = cfg.service  || '';
+  document.getElementById('cfg-template').value = cfg.template || '';
+  document.getElementById('cfg-location').value = cfg.location || 'Cornelly Queen Anne';
+  updateConfigBadge(cfg);
+}
+
+function updateConfigBadge(cfg) {
+  const badge = document.getElementById('configStatusBadge');
+  if (cfg && cfg.pubkey && cfg.service && cfg.template) {
+    badge.className = 'config-status ok';
+    badge.textContent = '✓ EmailJS configured — emails will send on order submission';
+  } else {
+    badge.className = 'config-status bad';
+    badge.textContent = '⚠ EmailJS not configured — orders will be saved locally only';
+  }
+}
+
+function saveConfig() {
+  const cfg = {
+    pubkey:   document.getElementById('cfg-pubkey').value.trim(),
+    service:  document.getElementById('cfg-service').value.trim(),
+    template: document.getElementById('cfg-template').value.trim(),
+    location: document.getElementById('cfg-location').value.trim() || 'Cornelly Restaurant Group'
+  };
+  saveConfig2(cfg);
+  updateConfigBadge(cfg);
+  showToast('Settings saved!');
+}
+
+anync function testEmail() {
+  const cfg = getConfig();
+  if (!cfg.pubkey || !cfg.service || !cfg.template) {
+    showToast('Please save your EmailJS settings first.', 'error'); return;
+  }
+  showToast('Sending test email…');
+  try {
+    emailjs.init(cfg.pubkey);
+    await emailjs.send(cfg.service, cfg.template, {
+      order_date:    'TEST — ' + formatDisplay(todayStr()),
+      delivery_date: 'TEST — Tomorrow',
+      pasta_shape:   'Test Shape (Rigatoni)',
+      quantity:      '5',
+      price_per_bag: '12.00',
+      total_cost:    '60.00',
+      notes:         'This is a test email from the Pasta Order System.',
+      location:      cfg.location || 'Cornelly Restaurant Group'
+    });
+    showToast('✅ Test email sent! Check doughordering@cornellyqueenanne.com');
+  } catch(err) {
+    console.error(err);
+    showToast('Test failed: ' + (err.text || err.message || JSON.stringify(err)), 'error');
+  }
+}
+
+function copyTemplate() {
+  const txt = `Hi Production Kitchen,
+
+A new pasta order has been placed from {{location}}.
+
+Order Date:     {{order_date}}
+Delivery Date:  {{delivery_date}}
+
+Pasta Shape:    {{pasta_shape}}
+Quantity:       {{quantity}} bags
+Price per Bag:  ${{price_per_bag}}
+Total Cost:     ${{total_cost}}
+
+Special Notes:
+{{notes}}
+
+Please confirm receipt by replying to this email.
+
+Thank you,
+{{location}}`;
+  navigator.clipboard.writeText(txt).then(() => showToast('Template copied to clipboard!'));
+}
+
+function exportData() {
+  const data = {
+    products: getProducts(),
+    orders:   getOrders(),
+    config:   getConfig(),
+    exported: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'pasta-orders-backup-' + todayStr() + '.json';
+  a.click();
+}
+
+function clearAllData() {
+  if (!confirm('This will permanently delete ALL products, orders, and settings. Are you sure?')) return;
+  if (!confirm('Are you absolutely sure? This cannot be undone.')) return;
+  localStorage.removeItem('pasta_products');
+  localStorage.removeItem('pasta_orders');
+  localStorage.removeItem('pasta_config');
+  showToast('All data cleared.');
+  loadConfig();
+}
+
+// ─────────────────────────────────────────
+//  UTILITIES
+// ─────────────────────────────────────────
+function esc(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ─────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  initOrderForm();
+});
+</script>
+</body>
+</html>
+
