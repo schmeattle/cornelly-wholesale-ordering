@@ -783,14 +783,14 @@ function addOrderRow() {
   row.innerHTML = `
     <div class="field">
       <label>Pasta Shape</label>
-      <select id="shape-${idx}" onchange="updateCost();maybeAutoAddRow(${idx})">
+      <select id="shape-${idx}" onchange="updateCost()">
         <option value="">— Select —</option>
       </select>
     </div>
     <div class="field">
       <label>Bags</label>
       <input type="number" id="qty-${idx}" min="1" step="1" placeholder="0"
-             oninput="updateCost();maybeAutoAddRow(${idx})" style="width:100%"/>
+             oninput="updateCost()" style="width:100%"/>
     </div>
     <span class="item-subtotal" id="sub-${idx}">—</span>
     <button class="item-remove" onclick="removeOrderRow(${idx})" title="Remove this item">×</button>
@@ -832,16 +832,6 @@ function removeOrderRow(idx) {
   row.remove();
   _updateRemoveButtons();
   updateCost();
-}
-
-function maybeAutoAddRow(idx) {
-  const shape = document.getElementById('shape-' + idx)?.value;
-  const qty   = document.getElementById('qty-'   + idx)?.value;
-  if (!shape || !qty || parseInt(qty) < 1) return;
-  // Only auto-add if this is the last row
-  const rows = document.querySelectorAll('.order-item-row');
-  const last = rows[rows.length - 1];
-  if (last && last.id === 'order-row-' + idx) addOrderRow();
 }
 
 function _getRowPrice(idx) {
@@ -1116,7 +1106,7 @@ function renderHistory() {
       <td>${o.quantity}</td>
       <td>${priceCell}</td>
       <td><strong>$${parseFloat(o.totalCost).toFixed(2)}</strong></td>
-      <td style="font-size:12px;color:var(--text-lt);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.notes)}">${esc(o.notes)}</td>
+      <td style="font-size:12px;color:var(--text-lt);max-width:160px;white-space:nowraw;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.notes)}">${esc(o.notes)}</td>
       <td>
         <button class="btn btn-sm btn-danger" onclick="deleteOrder(${o.id})">Delete</button>
       </td>
