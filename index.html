@@ -688,7 +688,7 @@ function showToast(msg, type='') {
 
 // ─────────────────────────────────────────
 //  NAVIGATION
-// ──────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -1038,7 +1038,7 @@ function saveConfig() {
   showToast('Settings saved!');
 }
 
-anync function testEmail() {
+async function testEmail() {
   const cfg = getConfig();
   if (!cfg.pubkey || !cfg.service || !cfg.template) {
     showToast('Please save your EmailJS settings first.', 'error'); return;
@@ -1129,4 +1129,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
