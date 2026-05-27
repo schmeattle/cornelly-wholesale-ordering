@@ -7,652 +7,211 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     :root {
-      --green:   #1e3a2f;
-      --green2:  #2d5540;
-      --gold:    #c8a45a;
-      --gold-lt: #e8d5a3;
-      --cream:   #f7f3ec;
-      --white:   #ffffff;
-      --gray-lt: #f0ede8;
-      --gray:    #d4cfc8;
-      --text:    #2a2a22;
-      --text-lt: #6b6b5e;
-      --red:     #c0392b;
-      --green-ok:#2e7d52;
-      --radius:  10px;
-      --shadow:  0 2px 12px rgba(0,0,0,.10);
+      --green:   #1e3a2f; --green2:  #2d5540; --gold:    #c8a45a; --gold-lt: #e8d5a3;
+      --cream:   #f7f3ec; --white:   #ffffff; --gray-lt: #f0ede8; --gray:    #d4cfc8;
+      --text:    #2a2a22; --text-lt: #6b6b5e; --red:     #c0392b; --green-ok:#2e7d52;
+      --radius:  10px;    --shadow:  0 2px 12px rgba(0,0,0,.10);
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: var(--cream);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    /* ── HEADER ── */
-    header {
-      background: var(--green);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 32px;
-      height: 64px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.25);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .brand-icon {
-      font-size: 26px;
-      line-height: 1;
-    }
-    .brand-text h1 {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: .4px;
-    }
-    .brand-text p {
-      font-size: 11px;
-      opacity: .65;
-      letter-spacing: .3px;
-    }
-    nav {
-      display: flex;
-      gap: 4px;
-    }
-    nav button {
-      background: transparent;
-      border: none;
-      color: rgba(255,255,255,.75);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background .15s, color .15s;
-      letter-spacing: .2px;
-    }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+    header { background: var(--green); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 64px; box-shadow: 0 2px 8px rgba(0,0,0,.25); position: sticky; top: 0; z-index: 100; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-icon { font-size: 26px; line-height: 1; }
+    .brand-text h1 { font-size: 16px; font-weight: 700; letter-spacing: .4px; }
+    .brand-text p { font-size: 11px; opacity: .65; letter-spacing: .3px; }
+    nav { display: flex; gap: 4px; }
+    nav button { background: transparent; border: none; color: rgba(255,255,255,.75); font-size: 13px; font-weight: 500; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: background .15s, color .15s; letter-spacing: .2px; }
     nav button:hover { background: rgba(255,255,255,.1); color: #fff; }
     nav button.active { background: var(--gold); color: var(--green); font-weight: 700; }
-
-    /* ── MAIN LAYOUT ── */
     main { max-width: 860px; margin: 0 auto; padding: 36px 24px 80px; }
-
-    .page { display: none; }
-    .page.active { display: block; }
-
-    .page-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--green);
-      margin-bottom: 4px;
-    }
-    .page-sub {
-      font-size: 13px;
-      color: var(--text-lt);
-      margin-bottom: 28px;
-    }
-
-    /* ── CARDS ── */
-    .card {
-      background: var(--white);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 28px 32px;
-      margin-bottom: 24px;
-    }
-    .card h2 {
-      font-size: 14px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .8px;
-      color: var(--green2);
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid var(--gold-lt);
-    }
-
-    /* ── FORM GRID ── */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
+    .page { display: none; } .page.active { display: block; }
+    .page-title { font-size: 22px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+    .page-sub { font-size: 13px; color: var(--text-lt); margin-bottom: 28px; }
+    .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px 32px; margin-bottom: 24px; }
+    .card h2 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--green2); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--gold-lt); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
     .form-grid .full { grid-column: 1 / -1; }
-
     .field { display: flex; flex-direction: column; gap: 6px; }
-    .field label {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      color: var(--text-lt);
-    }
-    .field input,
-    .field select,
-    .field textarea {
-      border: 1.5px solid var(--gray);
-      border-radius: 7px;
-      padding: 10px 13px;
-      font-size: 14px;
-      font-family: inherit;
-      color: var(--text);
-      background: var(--white);
-      transition: border-color .15s, box-shadow .15s;
-      outline: none;
-    }
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: var(--green2);
-      box-shadow: 0 0 0 3px rgba(45,85,64,.12);
-    }
+    .field label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text-lt); }
+    .field input, .field select, .field textarea { border: 1.5px solid var(--gray); border-radius: 7px; padding: 10px 13px; font-size: 14px; font-family: inherit; color: var(--text); background: var(--white); transition: border-color .15s, box-shadow .15s; outline: none; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--green2); box-shadow: 0 0 0 3px rgba(45,85,64,.12); }
     .field textarea { resize: vertical; min-height: 80px; }
-
-    /* Cost display */
-    .cost-display {
-      background: var(--gray-lt);
-      border: 1.5px solid var(--gold-lt);
-      border-radius: 7px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .cost-display span:first-child {
-      font-size: 13px;
-      color: var(--text-lt);
-      font-weight: 600;
-    }
-    .cost-display .cost-value {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--green);
-    }
-
-    /* ── ORDER ITEM ROWS ── */
+    .cost-display { background: var(--gray-lt); border: 1.5px solid var(--gold-lt); border-radius: 7px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .cost-display span:first-child { font-size: 13px; color: var(--text-lt); font-weight: 600; }
+    .cost-display .cost-value { font-size: 22px; font-weight: 800; color: var(--green); }
     .order-items { display: flex; flex-direction: column; gap: 8px; }
-    .order-item-row {
-      display: grid;
-      grid-template-columns: 1fr 110px 72px 32px;
-      gap: 10px;
-      align-items: end;
-      background: var(--gray-lt);
-      border: 1.5px solid var(--gray);
-      border-radius: 8px;
-      padding: 12px 14px 10px;
-    }
-    .order-item-row .field { margin: 0; }
-    .order-item-row .field label { font-size: 11px; }
-    .item-subtotal {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--green);
-      padding-bottom: 10px;
-      white-space: nowrap;
-      text-align: right;
-    }
-    .item-remove {
-      background: transparent;
-      border: 1.5px solid var(--gray);
-      border-radius: 6px;
-      color: var(--text-lt);
-      font-size: 18px;
-      line-height: 1;
-      cursor: pointer;
-      width: 32px;
-      height: 38px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 1px;
-      transition: background .12s, border-color .12s, color .12s;
-      font-family: inherit;
-    }
+    .order-item-row { display: grid; grid-template-columns: 1fr 110px 72px 32px; gap: 10px; align-items: end; background: var(--gray-lt); border: 1.5px solid var(--gray); border-radius: 8px; padding: 12px 14px 10px; }
+    .order-item-row .field { margin: 0; } .order-item-row .field label { font-size: 11px; }
+    .item-subtotal { font-size: 14px; font-weight: 700; color: var(--green); padding-bottom: 10px; white-space: nowrap; text-align: right; }
+    .item-remove { background: transparent; border: 1.5px solid var(--gray); border-radius: 6px; color: var(--text-lt); font-size: 18px; line-height: 1; cursor: pointer; width: 32px; height: 38px; display: flex; align-items: center; justify-content: center; margin-bottom: 1px; transition: background .12s, border-color .12s, color .12s; font-family: inherit; }
     .item-remove:hover { background: var(--red); border-color: var(--red); color: #fff; }
-
-    /* ── BUTTONS ── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      border: none;
-      border-radius: 8px;
-      padding: 11px 22px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity .15s, transform .1s;
-      font-family: inherit;
-      letter-spacing: .2px;
-    }
+    .btn { display: inline-flex; align-items: center; gap: 7px; border: none; border-radius: 8px; padding: 11px 22px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity .15s, transform .1s; font-family: inherit; letter-spacing: .2px; }
     .btn:active { transform: scale(.98); }
-    .btn-primary { background: var(--green); color: #fff; }
-    .btn-primary:hover { opacity: .88; }
-    .btn-gold { background: var(--gold); color: var(--green); }
-    .btn-gold:hover { opacity: .88; }
+    .btn-primary { background: var(--green); color: #fff; } .btn-primary:hover { opacity: .88; }
+    .btn-gold { background: var(--gold); color: var(--green); } .btn-gold:hover { opacity: .88; }
     .btn-sm { padding: 7px 14px; font-size: 12px; }
-    .btn-danger { background: var(--red); color: #fff; }
-    .btn-danger:hover { opacity: .88; }
-    .btn-outline {
-      background: transparent;
-      border: 1.5px solid var(--green2);
-      color: var(--green2);
-    }
+    .btn-danger { background: var(--red); color: #fff; } .btn-danger:hover { opacity: .88; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--green2); color: var(--green2); }
     .btn-outline:hover { background: var(--green2); color: #fff; }
     .btn:disabled { opacity: .45; cursor: not-allowed; }
-
-    .btn-row {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
-
-    /* ── TOAST NOTIFICATION ── */
-    #toast {
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--green);
-      color: #fff;
-      padding: 13px 24px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 500;
-      box-shadow: 0 4px 20px rgba(0,0,0,.2);
-      opacity: 0;
-      transition: opacity .25s, transform .25s;
-      z-index: 999;
-      max-width: 400px;
-      text-align: center;
-    }
+    .btn-row { display: flex; gap: 12px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+    #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--green); color: #fff; padding: 13px 24px; border-radius: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,.2); opacity: 0; transition: opacity .25s, transform .25s; z-index: 999; max-width: 400px; text-align: center; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    #toast.error { background: var(--red); }
-    #toast.warning { background: #b07a00; }
-
-    /* ── PRODUCTS TABLE ── */
+    #toast.error { background: var(--red); } #toast.warning { background: #b07a00; }
     .table-wrap { overflow-x: auto; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-    th {
-      background: var(--green);
-      color: #fff;
-      padding: 10px 14px;
-      text-align: left;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-    }
-    th:first-child { border-radius: 7px 0 0 0; }
-    th:last-child  { border-radius: 0 7px 0 0; }
-    td {
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--gray-lt);
-      color: var(--text);
-    }
-    tr:hover td { background: var(--gray-lt); }
-    tr:last-child td { border-bottom: none; }
-    .no-data td {
-      text-align: center;
-      color: var(--text-lt);
-      padding: 32px;
-      font-style: italic;
-    }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background: var(--green); color: #fff; padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    th:first-child { border-radius: 7px 0 0 0; } th:last-child { border-radius: 0 7px 0 0; }
+    td { padding: 11px 14px; border-bottom: 1px solid var(--gray-lt); color: var(--text); }
+    tr:hover td { background: var(--gray-lt); } tr:last-child td { border-bottom: none; }
+    .no-data td { text-align: center; color: var(--text-lt); padding: 32px; font-style: italic; }
     .no-data:hover td { background: transparent; }
-
-    /* ── ADD PRODUCT FORM ── */
-    .inline-form {
-      display: flex;
-      gap: 12px;
-      align-items: flex-end;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
+    .inline-form { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 20px; }
     .inline-form .field { flex: 1; min-width: 160px; }
-
-    /* ── HISTORY FILTERS ── */
-    .filter-bar {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-    .filter-bar label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-lt);
-      text-transform: uppercase;
-      letter-spacing: .4px;
-      margin-right: 4px;
-    }
-    .period-btn {
-      border: 1.5px solid var(--gray);
-      background: var(--white);
-      color: var(--text-lt);
-      font-size: 12px;
-      font-weight: 600;
-      padding: 7px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all .15s;
-      font-family: inherit;
-    }
+    .filter-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .filter-bar label { font-size: 12px; font-weight: 600; color: var(--text-lt); text-transform: uppercase; letter-spacing: .4px; margin-right: 4px; }
+    .period-btn { border: 1.5px solid var(--gray); background: var(--white); color: var(--text-lt); font-size: 12px; font-weight: 600; padding: 7px 14px; border-radius: 6px; cursor: pointer; transition: all .15s; font-family: inherit; }
     .period-btn:hover { border-color: var(--green2); color: var(--green2); }
-    .period-btn.active {
-      background: var(--green);
-      border-color: var(--green);
-      color: #fff;
-    }
-    .filter-bar input[type="date"] {
-      border: 1.5px solid var(--gray);
-      border-radius: 6px;
-      padding: 7px 12px;
-      font-size: 13px;
-      font-family: inherit;
-      color: var(--text);
-      outline: none;
-      background: var(--white);
-    }
-    .filter-bar input[type="date"]:focus {
-      border-color: var(--green2);
-    }
-
-    /* Summary strip */
-    .summary-strip {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-    .summary-chip {
-      background: var(--green);
-      color: #fff;
-      border-radius: 8px;
-      padding: 10px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .summary-chip .chip-val {
-      font-size: 20px;
-      font-weight: 800;
-    }
-    .summary-chip .chip-lbl {
-      font-size: 11px;
-      opacity: .7;
-      text-transform: uppercase;
-      letter-spacing: .4px;
-    }
-
-    /* ── SETTINGS ── */
-    .settings-info {
-      background: var(--gray-lt);
-      border-left: 4px solid var(--gold);
-      border-radius: 0 8px 8px 0;
-      padding: 14px 18px;
-      margin-bottom: 20px;
-      font-size: 13px;
-      line-height: 1.6;
-      color: var(--text-lt);
-    }
-    .settings-info strong { color: var(--text); }
-    .settings-info ol { padding-left: 18px; margin-top: 8px; }
-    .settings-info li { margin-bottom: 4px; }
-    .settings-info a { color: var(--green2); }
-
-    .config-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      padding: 6px 14px;
-      border-radius: 20px;
-      margin-bottom: 20px;
-    }
-    .config-status.ok  { background: #e8f5ee; color: var(--green-ok); }
+    .period-btn.active { background: var(--green); border-color: var(--green); color: #fff; }
+    .filter-bar input[type="date"] { border: 1.5px solid var(--gray); border-radius: 6px; padding: 7px 12px; font-size: 13px; font-family: inherit; color: var(--text); outline: none; background: var(--white); }
+    .filter-bar input[type="date"]:focus { border-color: var(--green2); }
+    .summary-strip { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+    .summary-chip { background: var(--green); color: #fff; border-radius: 8px; padding: 10px 18px; display: flex; flex-direction: column; gap: 2px; }
+    .summary-chip .chip-val { font-size: 20px; font-weight: 800; }
+    .summary-chip .chip-lbl { font-size: 11px; opacity: .7; text-transform: uppercase; letter-spacing: .4px; }
+    .settings-info { background: var(--gray-lt); border-left: 4px solid var(--gold); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; line-height: 1.6; color: var(--text-lt); }
+    .settings-info strong { color: var(--text); } .settings-info ol { padding-left: 18px; margin-top: 8px; }
+    .settings-info li { margin-bottom: 4px; } .settings-info a { color: var(--green2); }
+    .config-status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; margin-bottom: 20px; }
+    .config-status.ok { background: #e8f5ee; color: var(--green-ok); }
     .config-status.bad { background: #fdecea; color: var(--red); }
-
-    /* Responsive */
     @media (max-width: 600px) {
-      header { padding: 0 16px; height: auto; padding: 12px 16px; flex-direction: column; gap: 10px; }
-      nav { gap: 2px; }
-      nav button { padding: 7px 10px; font-size: 12px; }
-      main { padding: 20px 16px 60px; }
-      .card { padding: 20px 18px; }
-      .form-grid { grid-template-columns: 1fr; }
-      .form-grid .full { grid-column: 1; }
+      header { padding: 12px 16px; height: auto; flex-direction: column; gap: 10px; }
+      nav { gap: 2px; } nav button { padding: 7px 10px; font-size: 12px; }
+      main { padding: 20px 16px 60px; } .card { padding: 20px 18px; }
+      .form-grid { grid-template-columns: 1fr; } .form-grid .full { grid-column: 1; }
     }
   </style>
 </head>
 <body>
-
 <header>
   <div class="brand">
     <span class="brand-icon">🍝</span>
-    <div class="brand-text">
-      <h1>Pasta Order System</h1>
-      <p>Cornelly Restaurant Group</p>
-    </div>
+    <div class="brand-text"><h1>Pasta Order System</h1><p>Cornelly Restaurant Group</p></div>
   </div>
   <nav>
-    <button id="nav-order"   class="active" onclick="showPage('order')">New Order</button>
-    <button id="nav-products"              onclick="showPage('products')">Products</button>
-    <button id="nav-history"               onclick="showPage('history')">Order History</button>
-    <button id="nav-settings"              onclick="showPage('settings')">Settings</button>
+    <button id="nav-order" class="active" onclick="showPage('order')">New Order</button>
+    <button id="nav-products" onclick="showPage('products')">Products</button>
+    <button id="nav-history" onclick="showPage('history')">Order History</button>
+    <button id="nav-settings" onclick="showPage('settings')">Settings</button>
   </nav>
 </header>
-
 <main>
-
-  <!-- ══════════════════ ORDER FORM ══════════════════ -->
   <section id="page-order" class="page active">
     <div class="page-title">Place a Pasta Order</div>
     <div class="page-sub">Orders are emailed to the production kitchen automatically on submission.</div>
-
     <div class="card">
       <h2>Order Details</h2>
       <div class="form-grid">
-
-        <div class="field">
-          <label>Order Date</label>
-          <input type="date" id="orderDate" />
-        </div>
-
-        <div class="field">
-          <label>Desired Delivery Date</label>
-          <select id="deliveryDate"></select>
-        </div>
-
+        <div class="field"><label>Order Date</label><input type="date" id="orderDate" /></div>
+        <div class="field"><label>Desired Delivery Date</label><select id="deliveryDate"></select></div>
         <div class="field full">
           <label>Pasta Items</label>
           <div id="orderItems" class="order-items"></div>
           <button class="btn btn-sm btn-outline" onclick="addOrderRow()" style="margin-top:10px;">+ Add Another Item</button>
         </div>
-
-        <div class="field full">
-          <label>Special Notes</label>
-          <textarea id="notes" placeholder="Any special instructions, substitutions, or delivery notes…"></textarea>
-        </div>
-
+        <div class="field full"><label>Special Notes</label><textarea id="notes" placeholder="Any special instructions, substitutions, or delivery notes…"></textarea></div>
         <div class="field full">
           <label>Estimated Order Total</label>
-          <div class="cost-display">
-            <span>All items combined</span>
-            <span class="cost-value" id="costDisplay">—</span>
-          </div>
+          <div class="cost-display"><span>All items combined</span><span class="cost-value" id="costDisplay">—</span></div>
         </div>
-
       </div>
-
       <div class="btn-row" style="margin-top:24px;">
-        <button class="btn btn-primary" id="submitBtn" onclick="submitOrder()">
-          📧 Submit Order &amp; Email Kitchen
-        </button>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitOrder()">📧 Submit Order &amp; Email Kitchen</button>
         <button class="btn btn-outline" onclick="resetOrderForm()">Clear</button>
         <span id="submitStatus" style="font-size:13px; color:var(--text-lt);"></span>
       </div>
     </div>
   </section>
-
-  <!-- ══════════════════ PRODUCTS ══════════════════ -->
   <section id="page-products" class="page">
     <div class="page-title">Pasta Products</div>
     <div class="page-sub">Manage available pasta shapes and their price per bag.</div>
-
     <div class="card">
       <h2>Add New Product</h2>
       <div class="inline-form">
-        <div class="field" style="flex:2">
-          <label>Pasta Shape Name</label>
-          <input type="text" id="newProductName" placeholder="e.g. Tagliatelle, Rigatoni…" />
-        </div>
-        <div class="field" style="flex:1">
-          <label>Price per Bag ($)</label>
-          <input type="number" id="newProductPrice" min="0" step="0.01" placeholder="0.00" />
-        </div>
+        <div class="field" style="flex:2"><label>Pasta Shape Name</label><input type="text" id="newProductName" placeholder="e.g. Tagliatelle, Rigatoni…" /></div>
+        <div class="field" style="flex:1"><label>Price per Bag ($)</label><input type="number" id="newProductPrice" min="0" step="0.01" placeholder="0.00" /></div>
         <button class="btn btn-gold" onclick="addProduct()" style="margin-bottom:1px;">+ Add Product</button>
       </div>
-
       <div class="table-wrap">
         <table id="productsTable">
-          <thead>
-            <tr>
-              <th>Pasta Shape</th>
-              <th>Price per Bag</th>
-              <th>Added</th>
-              <th></th>
-            </tr>
-          </thead>
+          <thead><tr><th>Pasta Shape</th><th>Price per Bag</th><th>Added</th><th></th></tr></thead>
           <tbody id="productsBody"></tbody>
         </table>
       </div>
     </div>
   </section>
-
-  <!-- ══════════════════ HISTORY ══════════════════ -->
   <section id="page-history" class="page">
     <div class="page-title">Order History</div>
     <div class="page-sub">Filter and review all pasta orders placed through this system.</div>
-
     <div class="card">
       <h2>Filter Orders</h2>
       <div class="filter-bar">
         <label>View by:</label>
-        <button class="period-btn active" data-period="all"   onclick="setPeriod('all')">All Time</button>
-        <button class="period-btn"        data-period="day"   onclick="setPeriod('day')">Day</button>
-        <button class="period-btn"        data-period="week"  onclick="setPeriod('week')">Week</button>
-        <button class="period-btn"        data-period="month" onclick="setPeriod('month')">Month</button>
-        <button class="period-btn"        data-period="year"  onclick="setPeriod('year')">Year</button>
+        <button class="period-btn active" data-period="all" onclick="setPeriod('all')">All Time</button>
+        <button class="period-btn" data-period="day" onclick="setPeriod('day')">Day</button>
+        <button class="period-btn" data-period="week" onclick="setPeriod('week')">Week</button>
+        <button class="period-btn" data-period="month" onclick="setPeriod('month')">Month</button>
+        <button class="period-btn" data-period="year" onclick="setPeriod('year')">Year</button>
         <input type="date" id="historyDatePicker" onchange="renderHistory()" style="display:none;" />
       </div>
-
-      <div class="summary-strip" id="summarySec">
-        <div class="summary-chip">
-          <span class="chip-val" id="sumOrders">—</span>
-          <span class="chip-lbl">Orders</span>
-        </div>
-        <div class="summary-chip">
-          <span class="chip-val" id="sumBags">—</span>
-          <span class="chip-lbl">Bags Ordered</span>
-        </div>
-        <div class="summary-chip">
-          <span class="chip-val" id="sumCost">—</span>
-          <span class="chip-lbl">Total Spend</span>
-        </div>
+      <div class="summary-strip">
+        <div class="summary-chip"><span class="chip-val" id="sumOrders">—</span><span class="chip-lbl">Orders</span></div>
+        <div class="summary-chip"><span class="chip-val" id="sumBags">—</span><span class="chip-lbl">Bags Ordered</span></div>
+        <div class="summary-chip"><span class="chip-val" id="sumCost">—</span><span class="chip-lbl">Total Spend</span></div>
       </div>
-
       <div class="table-wrap">
         <table>
-          <thead>
-            <tr>
-              <th>Order Date</th>
-              <th>Delivery Date</th>
-              <th>Pasta Shape</th>
-              <th>Bags</th>
-              <th>Price/Bag</th>
-              <th>Total Cost</th>
-              <th>Notes</th>
-              <th></th>
-            </tr>
-          </thead>
+          <thead><tr><th>Order Date</th><th>Delivery Date</th><th>Pasta Shape</th><th>Bags</th><th>Price/Bag</th><th>Total Cost</th><th>Notes</th><th></th></tr></thead>
           <tbody id="historyBody"></tbody>
         </table>
       </div>
     </div>
   </section>
-
-  <!-- ══════════════════ SETTINGS ══════════════════ -->
   <section id="page-settings" class="page">
     <div class="page-title">Settings</div>
     <div class="page-sub">Configure EmailJS so the system can send order emails to the production kitchen.</div>
-
     <div class="card">
       <h2>Email Configuration (EmailJS)</h2>
-
       <div class="settings-info">
         <strong>One-time setup — takes about 5 minutes:</strong>
         <ol>
           <li>Go to <a href="https://www.emailjs.com" target="_blank">emailjs.com</a> and create a free account.</li>
-          <li>In EmailJS → <strong>Email Services</strong>, add your email provider (Gmail, Outlook, etc.) and copy the <strong>Service ID</strong>.</li>
-          <li>In EmailJS → <strong>Email Templates</strong>, click <strong>Create New Template</strong>. Set the <strong>To Email</strong> field to <code>doughordering@cornellyqueenanne.com</code>. Use the variables below in the template body, then save and copy the <strong>Template ID</strong>.</li>
+          <li>In EmailJS → <strong>Email Services</strong>, add your email provider and copy the <strong>Service ID</strong>.</li>
+          <li>In EmailJS → <strong>Email Templates</strong>, create a template with <strong>To Email</strong> set to <code>doughordering@cornellyqueenanne.com</code>, then copy the <strong>Template ID</strong>.</li>
           <li>In EmailJS → <strong>Account → General</strong>, copy your <strong>Public Key</strong>.</li>
           <li>Paste all three values below and click Save.</li>
         </ol>
-        <div style="margin-top:12px; padding:10px 14px; background:var(--white); border-radius:6px; font-size:12px; font-family:monospace; line-height:1.8; color:var(--text);">
-          Available template variables:<br>
-          <strong>{{order_date}}</strong> &nbsp;{{delivery_date}}&nbsp; {{items_list}}&nbsp; {{total_cost}}&nbsp; {{notes}}&nbsp; {{location}}&nbsp; <span style="color:var(--text-lt)">{{pasta_shape}} {{quantity}} {{price_per_bag}} (legacy single-item)</span>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--white);border-radius:6px;font-size:12px;font-family:monospace;line-height:1.8;color:var(--text);">
+          Available variables: <strong>{{order_date}}</strong> {{delivery_date}} {{items_list}} {{total_cost}} {{notes}} {{location}}
         </div>
       </div>
-
       <div id="configStatusBadge" class="config-status bad">⚠ EmailJS not configured</div>
-
       <div class="form-grid" style="max-width:560px;">
-        <div class="field full">
-          <label>EmailJS Public Key</label>
-          <input type="text" id="cfg-pubkey" placeholder="e.g. aBcDeFgH1234567890" />
-        </div>
-        <div class="field">
-          <label>Service ID</label>
-          <input type="text" id="cfg-service" placeholder="e.g. service_abc123" />
-        </div>
-        <div class="field">
-          <label>Template ID</label>
-          <input type="text" id="cfg-template" placeholder="e.g. template_xyz789" />
-        </div>
-        <div class="field full">
-          <label>Your Restaurant Location (shown in email)</label>
-          <input type="text" id="cfg-location" placeholder="e.g. Cornelly Queen Anne" value="Cornelly Queen Anne" />
-        </div>
+        <div class="field full"><label>EmailJS Public Key</label><input type="text" id="cfg-pubkey" placeholder="e.g. aBcDeFgH1234567890" /></div>
+        <div class="field"><label>Service ID</label><input type="text" id="cfg-service" placeholder="e.g. service_abc123" /></div>
+        <div class="field"><label>Template ID</label><input type="text" id="cfg-template" placeholder="e.g. template_xyz789" /></div>
+        <div class="field full"><label>Restaurant Location (shown in email)</label><input type="text" id="cfg-location" placeholder="e.g. Cornelly Queen Anne" value="Cornelly Queen Anne" /></div>
       </div>
-
       <div class="btn-row" style="margin-top:20px;">
         <button class="btn btn-primary" onclick="saveConfig()">Save Settings</button>
         <button class="btn btn-outline" onclick="testEmail()">Send Test Email</button>
       </div>
     </div>
-
     <div class="card">
       <h2>Email Template — Suggested Body</h2>
-      <div style="font-size:13px; color:var(--text-lt); margin-bottom:12px;">
-        Copy this into your EmailJS template body. Paste as-is; EmailJS fills in the <code>{{variables}}</code> automatically.
-      </div>
-      <div style="background:var(--gray-lt); border-radius:8px; padding:18px 20px; font-family:monospace; font-size:13px; line-height:1.9; white-space:pre-wrap; color:var(--text);">Hi Production Kitchen,
+      <div style="font-size:13px;color:var(--text-lt);margin-bottom:12px;">Copy this into your EmailJS template body.</div>
+      <div style="background:var(--gray-lt);border-radius:8px;padding:18px 20px;font-family:monospace;font-size:13px;line-height:1.9;white-space:pre-wrap;color:var(--text);">Hi Production Kitchen,
 
 A new pasta order has been placed from {{location}}.
 
@@ -666,8 +225,6 @@ Total Cost:     ${{total_cost}}
 
 Special Notes:
 {{notes}}
-
-Please confirm receipt by replying to this email.
 
 Thank you,
 {{location}}</div>
@@ -675,576 +232,305 @@ Thank you,
         <button class="btn btn-sm btn-outline" onclick="copyTemplate()">📋 Copy Template</button>
       </div>
     </div>
-
     <div class="card">
       <h2>Data Management</h2>
-      <p style="font-size:13px; color:var(--text-lt); margin-bottom:16px;">
-        All order history and product data is stored locally in your browser. Clearing browser data will erase it.
-        Export a backup before clearing.
-      </p>
+      <p style="font-size:13px;color:var(--text-lt);margin-bottom:16px;">All order history and product data is stored locally in your browser. Export a backup before clearing.</p>
       <div class="btn-row">
         <button class="btn btn-outline" onclick="exportData()">⬇ Export Data (JSON)</button>
         <button class="btn btn-danger btn-sm" onclick="clearAllData()">🗑 Clear All Data</button>
       </div>
     </div>
   </section>
-
 </main>
-
-<!-- Toast -->
 <div id="toast"></div>
-
+<div id="settings-gate-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:36px 32px;width:340px;box-shadow:0 8px 32px rgba(0,0,0,.25);text-align:center;">
+    <div style="font-size:28px;margin-bottom:8px;">🔒</div>
+    <div style="font-size:18px;font-weight:700;color:#1e3a2f;margin-bottom:6px;">Settings</div>
+    <div style="font-size:14px;color:#6b6b5e;margin-bottom:20px;">Enter the password to access settings.</div>
+    <input id="settings-gate-input" type="password" placeholder="Password"
+      style="width:100%;padding:10px 14px;border:1.5px solid #d4cfc8;border-radius:8px;font-size:15px;outline:none;margin-bottom:10px;"
+      onkeydown="if(event.key==='Enter')submitSettingsGate();" />
+    <div id="settings-gate-error" style="display:none;color:#c0392b;font-size:13px;margin-bottom:10px;">Incorrect password. Try again.</div>
+    <button onclick="submitSettingsGate()" style="width:100%;padding:11px;background:#1e3a2f;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:8px;">Unlock</button>
+    <button onclick="hideSettingsGate()" style="width:100%;padding:9px;background:none;border:1.5px solid #d4cfc8;border-radius:8px;font-size:14px;color:#6b6b5e;cursor:pointer;">Cancel</button>
+  </div>
+</div>
 <script>
-// ─────────────────────────────────────────
-//  DATA HELPERS
-// ─────────────────────────────────────────
-function getProducts() { return JSON.parse(localStorage.getItem('pasta_products') || '[]'); }
-function saveProducts(arr) { localStorage.setItem('pasta_products', JSON.stringify(arr)); }
-
-function getOrders() { return JSON.parse(localStorage.getItem('pasta_orders') || '[]'); }
-function saveOrders(arr) { localStorage.setItem('pasta_orders', JSON.stringify(arr)); }
-
-function getConfig() { return JSON.parse(localStorage.getItem('pasta_config') || '{}'); }
-function saveConfig2(obj) { localStorage.setItem('pasta_config', JSON.stringify(obj)); }
-
-// ─────────────────────────────────────────
-//  TOAST
-// ─────────────────────────────────────────
+function getProducts(){return JSON.parse(localStorage.getItem('pasta_products')||'[]');}
+function saveProducts(a){localStorage.setItem('pasta_products',JSON.stringify(a));}
+function getOrders(){return JSON.parse(localStorage.getItem('pasta_orders')||'[]');}
+function saveOrders(a){localStorage.setItem('pasta_orders',JSON.stringify(a));}
+function getConfig(){return JSON.parse(localStorage.getItem('pasta_config')||'{}')}
+function saveConfig2(o){localStorage.setItem('pasta_config',JSON.stringify(o));}
 let toastTimer;
-function showToast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'show' + (type ? ' ' + type : '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.className = ''; }, 3800);
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='show'+(type?' '+type:'');clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{t.className='';},3800);
 }
-
-// ─────────────────────────────────────────
-//  NAVIGATION
-// ─────────────────────────────────────────
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  document.getElementById('nav-' + name).classList.add('active');
-  if (name === 'history') renderHistory();
-  if (name === 'products') renderProducts();
-  if (name === 'settings') loadConfig();
-  if (name === 'order') populateDeliveryDates();
+const SETTINGS_HASH='20f3765880a5c269b747e1e906054a4b4a3a991259f1e16b5dde4742cec2319a';
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
-
-// ─────────────────────────────────────────
-//  DATE UTILITIES
-// ─────────────────────────────────────────
-function todayStr() {
-  const d = new Date();
-  return d.toISOString().slice(0, 10);
+function showSettingsGate(){
+  document.getElementById('settings-gate-overlay').style.display='flex';
+  document.getElementById('settings-gate-input').value='';
+  document.getElementById('settings-gate-error').style.display='none';
+  setTimeout(()=>document.getElementById('settings-gate-input').focus(),50);
 }
-
-function formatDisplay(iso) {
-  // iso = "YYYY-MM-DD"
-  const [y, m, d] = iso.split('-').map(Number);
-  const dt = new Date(y, m - 1, d);
-  return dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+function hideSettingsGate(){document.getElementById('settings-gate-overlay').style.display='none';}
+async function submitSettingsGate(){
+  const val=document.getElementById('settings-gate-input').value;
+  const hash=await sha256(val);
+  if(hash===SETTINGS_HASH){
+    sessionStorage.setItem('settings_auth','1');hideSettingsGate();showPage('settings');
+  }else{
+    document.getElementById('settings-gate-error').style.display='block';
+    document.getElementById('settings-gate-input').value='';
+    document.getElementById('settings-gate-input').focus();
+  }
 }
-
-function populateDeliveryDates() {
-  const sel = document.getElementById('deliveryDate');
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
-  sel.innerHTML = '';
-  for (let i = 0; i <= 21; i++) {
-    const d = new Date(today); d.setDate(today.getDate() + i);
-    const iso = d.toISOString().slice(0,10);
-    const opt = document.createElement('option');
-    opt.value = iso;
-    if (i === 0) opt.text = 'Today — ' + d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
-    else if (i === 1) opt.text = 'Tomorrow — ' + d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
-    else opt.text = d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+function showPage(name){
+  if(name==='settings'&&!sessionStorage.getItem('settings_auth')){showSettingsGate();return;}
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  if(name==='history')renderHistory();
+  if(name==='products')renderProducts();
+  if(name==='settings')loadConfig();
+  if(name==='order')populateDeliveryDates();
+}
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function formatDisplay(iso){
+  const[y,m,d]=iso.split('-').map(Number);
+  return new Date(y,m-1,d).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+}
+function populateDeliveryDates(){
+  const sel=document.getElementById('deliveryDate');
+  const today=new Date();today.setHours(0,0,0,0);sel.innerHTML='';
+  for(let i=0;i<=21;i++){
+    const d=new Date(today);d.setDate(today.getDate()+i);
+    const iso=d.toISOString().slice(0,10);const opt=document.createElement('option');opt.value=iso;
+    opt.text=i===0?'Today — '+d.toLocaleDateString('en-US',{month:'short',day:'numeric'})
+            :i===1?'Tomorrow — '+d.toLocaleDateString('en-US',{month:'short',day:'numeric'})
+            :d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
     sel.appendChild(opt);
   }
-  // default to tomorrow
-  if (sel.options.length > 1) sel.selectedIndex = 1;
+  if(sel.options.length>1)sel.selectedIndex=1;
 }
-
-// ─────────────────────────────────────────
-//  ORDER FORM — MULTI-ITEM
-// ─────────────────────────────────────────
-let _rowCount = 0;
-
-function addOrderRow() {
-  _rowCount++;
-  const idx = _rowCount;
-  const container = document.getElementById('orderItems');
-  const row = document.createElement('div');
-  row.className = 'order-item-row';
-  row.id = 'order-row-' + idx;
-  row.innerHTML = `
-    <div class="field">
-      <label>Pasta Shape</label>
-      <select id="shape-${idx}" onchange="updateCost()">
-        <option value="">— Select —</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Bags</label>
-      <input type="number" id="qty-${idx}" min="1" step="1" placeholder="0"
-             oninput="updateCost()" style="width:100%"/>
-    </div>
-    <span class="item-subtotal" id="sub-${idx}">—</span>
-    <button class="item-remove" onclick="removeOrderRow(${idx})" title="Remove this item">×</button>
-  `;
-  container.appendChild(row);
-  _fillRowDropdown(idx);
-  _updateRemoveButtons();
+let _rowCount=0;
+function addOrderRow(){
+  _rowCount++;const idx=_rowCount;
+  const row=document.createElement('div');row.className='order-item-row';row.id='order-row-'+idx;
+  row.innerHTML=`<div class="field"><label>Pasta Shape</label><select id="shape-${idx}" onchange="updateCost()"><option value="">\u2014 Select \u2014</option></select></div><div class="field"><label>Bags</label><input type="number" id="qty-${idx}" min="1" step="1" placeholder="0" oninput="updateCost()" style="width:100%"/></div><span class="item-subtotal" id="sub-${idx}">\u2014</span><button class="item-remove" onclick="removeOrderRow(${idx})" title="Remove">&times;</button>`;
+  document.getElementById('orderItems').appendChild(row);
+  _fillRowDropdown(idx);_updateRemoveButtons();updateCost();
+}
+function _fillRowDropdown(idx){
+  const sel=document.getElementById('shape-'+idx);if(!sel)return;
+  const prev=sel.value;sel.innerHTML='<option value="">\u2014 Select \u2014</option>';
+  getProducts().forEach(p=>{const o=document.createElement('option');o.value=p.name;o.dataset.price=p.price;o.text=p.name+' \u2014 $'+parseFloat(p.price).toFixed(2)+'/bag';sel.appendChild(o);});
+  if(prev)sel.value=prev;
+}
+function _updateRemoveButtons(){
+  const rows=document.querySelectorAll('.order-item-row');
+  rows.forEach(r=>{const b=r.querySelector('.item-remove');if(b)b.style.visibility=rows.length>1?'visible':'hidden';});
+}
+function removeOrderRow(idx){
+  const row=document.getElementById('order-row-'+idx);if(!row)return;
+  if(document.querySelectorAll('.order-item-row').length<=1)return;
+  row.remove();_updateRemoveButtons();updateCost();
+}
+function _getRowPrice(idx){
+  const sel=document.getElementById('shape-'+idx);const opt=sel?.options[sel.selectedIndex];
+  return(opt&&opt.dataset.price)?parseFloat(opt.dataset.price):null;
+}
+function updateCost(){
+  let total=0;
+  document.querySelectorAll('.order-item-row').forEach(row=>{
+    const idx=row.id.replace('order-row-','');
+    const price=_getRowPrice(idx);const qty=parseInt(document.getElementById('qty-'+idx)?.value,10);
+    const subEl=document.getElementById('sub-'+idx);
+    if(price!==null&&qty>0){const sub=price*qty;total+=sub;if(subEl)subEl.textContent='$'+sub.toFixed(2);}
+    else{if(subEl)subEl.textContent='\u2014';}
+  });
+  const disp=document.getElementById('costDisplay');
+  if(disp)disp.textContent=total>0?'$'+total.toFixed(2):'\u2014';
+}
+function refreshShapeDropdown(){
+  document.querySelectorAll('.order-item-row').forEach(r=>_fillRowDropdown(r.id.replace('order-row-','')));
   updateCost();
 }
-
-function _fillRowDropdown(idx) {
-  const sel = document.getElementById('shape-' + idx);
-  if (!sel) return;
-  const prev = sel.value;
-  sel.innerHTML = '<option value="">— Select —</option>';
-  getProducts().forEach(p => {
-    const o = document.createElement('option');
-    o.value = p.name;
-    o.dataset.price = p.price;
-    o.text = p.name + ' — $' + parseFloat(p.price).toFixed(2) + '/bag';
-    sel.appendChild(o);
+function initOrderForm(){
+  document.getElementById('orderDate').value=todayStr();
+  populateDeliveryDates();document.getElementById('orderItems').innerHTML='';_rowCount=0;addOrderRow();
+}
+function resetOrderForm(){
+  document.getElementById('orderDate').value=todayStr();
+  populateDeliveryDates();document.getElementById('notes').value='';
+  document.getElementById('orderItems').innerHTML='';_rowCount=0;addOrderRow();
+}
+async function submitOrder(){
+  const orderDate=document.getElementById('orderDate').value;
+  const deliverySel=document.getElementById('deliveryDate');
+  const deliveryVal=deliverySel.value;
+  const deliveryText=deliverySel.options[deliverySel.selectedIndex]?.text||deliveryVal;
+  const notes=document.getElementById('notes').value.trim();
+  if(!orderDate){showToast('Please select an order date.','error');return;}
+  if(!deliveryVal){showToast('Please select a delivery date.','error');return;}
+  const items=[];let invalid=false;
+  document.querySelectorAll('.order-item-row').forEach(row=>{
+    const idx=row.id.replace('order-row-','');
+    const shape=document.getElementById('shape-'+idx)?.value;
+    const qty=parseInt(document.getElementById('qty-'+idx)?.value,10);
+    const price=_getRowPrice(idx);
+    if(!shape&&!(qty>0))return;
+    if(!shape){showToast('Please select a pasta shape for each item.','error');invalid=true;return;}
+    if(!qty||qty<1){showToast('Please enter a valid quantity for each item.','error');invalid=true;return;}
+    items.push({shape,quantity:qty,pricePerBag:price,subtotal:parseFloat((price*qty).toFixed(2))});
   });
-  if (prev) sel.value = prev;
-}
-
-function _updateRemoveButtons() {
-  const rows = document.querySelectorAll('.order-item-row');
-  rows.forEach(r => {
-    const btn = r.querySelector('.item-remove');
-    if (btn) btn.style.visibility = rows.length > 1 ? 'visible' : 'hidden';
-  });
-}
-
-function removeOrderRow(idx) {
-  const row = document.getElementById('order-row-' + idx);
-  if (!row) return;
-  const rows = document.querySelectorAll('.order-item-row');
-  if (rows.length <= 1) return; // never remove last row
-  row.remove();
-  _updateRemoveButtons();
-  updateCost();
-}
-
-function _getRowPrice(idx) {
-  const sel = document.getElementById('shape-' + idx);
-  const opt = sel?.options[sel.selectedIndex];
-  return (opt && opt.dataset.price) ? parseFloat(opt.dataset.price) : null;
-}
-
-function updateCost() {
-  let total = 0;
-  document.querySelectorAll('.order-item-row').forEach(row => {
-    const idx   = row.id.replace('order-row-', '');
-    const price = _getRowPrice(idx);
-    const qty   = parseInt(document.getElementById('qty-' + idx)?.value, 10);
-    const subEl = document.getElementById('sub-' + idx);
-    if (price !== null && qty > 0) {
-      const sub = price * qty;
-      total += sub;
-      if (subEl) subEl.textContent = '$' + sub.toFixed(2);
-    } else {
-      if (subEl) subEl.textContent = '—';
-    }
-  });
-  const disp = document.getElementById('costDisplay');
-  if (disp) disp.textContent = total > 0 ? '$' + total.toFixed(2) : '—';
-}
-
-function refreshShapeDropdown() {
-  // Refresh all row dropdowns (called when products change)
-  document.querySelectorAll('.order-item-row').forEach(row => {
-    _fillRowDropdown(row.id.replace('order-row-', ''));
-  });
-  updateCost();
-}
-
-function initOrderForm() {
-  document.getElementById('orderDate').value = todayStr();
-  populateDeliveryDates();
-  document.getElementById('orderItems').innerHTML = '';
-  _rowCount = 0;
-  addOrderRow();
-}
-
-function resetOrderForm() {
-  document.getElementById('orderDate').value = todayStr();
-  populateDeliveryDates();
-  document.getElementById('notes').value = '';
-  document.getElementById('orderItems').innerHTML = '';
-  _rowCount = 0;
-  addOrderRow();
-}
-
-async function submitOrder() {
-  const orderDate    = document.getElementById('orderDate').value;
-  const deliverySel  = document.getElementById('deliveryDate');
-  const deliveryVal  = deliverySel.value;
-  const deliveryText = deliverySel.options[deliverySel.selectedIndex]?.text || deliveryVal;
-  const notes        = document.getElementById('notes').value.trim();
-
-  if (!orderDate)   { showToast('Please select an order date.', 'error'); return; }
-  if (!deliveryVal) { showToast('Please select a delivery date.', 'error'); return; }
-
-  // Collect filled item rows
-  const items = [];
-  let invalid = false;
-  document.querySelectorAll('.order-item-row').forEach(row => {
-    const idx   = row.id.replace('order-row-', '');
-    const shape = document.getElementById('shape-' + idx)?.value;
-    const qty   = parseInt(document.getElementById('qty-' + idx)?.value, 10);
-    const price = _getRowPrice(idx);
-    if (!shape && !(qty > 0)) return; // skip blank rows
-    if (!shape) { showToast('Please select a pasta shape for each item.', 'error'); invalid = true; return; }
-    if (!qty || qty < 1) { showToast('Please enter a valid quantity for each item.', 'error'); invalid = true; return; }
-    items.push({ shape, quantity: qty, pricePerBag: price, subtotal: parseFloat((price * qty).toFixed(2)) });
-  });
-  if (invalid) return;
-  if (!items.length) { showToast('Please add at least one pasta item.', 'error'); return; }
-
-  const totalCost  = items.reduce((s, it) => s + it.subtotal, 0).toFixed(2);
-  const totalBags  = items.reduce((s, it) => s + it.quantity, 0);
-  const shapeLabel = items.map(it => it.shape + ' ×' + it.quantity).join(', ');
-  const itemsList  = items.map(it =>
-    it.shape + ': ' + it.quantity + ' bags @ $' + it.pricePerBag.toFixed(2) + '/bag = $' + it.subtotal.toFixed(2)
-  ).join('\n');
-
-  const cfg    = getConfig();
-  const btn    = document.getElementById('submitBtn');
-  const status = document.getElementById('submitStatus');
-
-  const order = {
-    id: Date.now(),
-    orderDate,
-    deliveryDate:  deliveryVal,
-    deliveryText,
-    items,                            // full line-item array
-    shape:         shapeLabel,        // summary string (history display)
-    quantity:      totalBags,
-    pricePerBag:   items.length === 1 ? items[0].pricePerBag : null,
-    totalCost:     parseFloat(totalCost),
-    notes:         notes || '—',
-    submittedAt:   new Date().toISOString()
-  };
-  const orders = getOrders();
-  orders.unshift(order);
-  saveOrders(orders);
-
-  if (cfg.pubkey && cfg.service && cfg.template) {
-    btn.disabled = true;
-    status.textContent = 'Sending email…';
-    try {
+  if(invalid)return;if(!items.length){showToast('Please add at least one pasta item.','error');return;}
+  const totalCost=items.reduce((s,it)=>s+it.subtotal,0).toFixed(2);
+  const totalBags=items.reduce((s,it)=>s+it.quantity,0);
+  const shapeLabel=items.map(it=>it.shape+' \xd7'+it.quantity).join(', ');
+  const itemsList=items.map(it=>it.shape+': '+it.quantity+' bags @ $'+it.pricePerBag.toFixed(2)+'/bag = $'+it.subtotal.toFixed(2)).join('\n');
+  const cfg=getConfig();const btn=document.getElementById('submitBtn');const status=document.getElementById('submitStatus');
+  const order={id:Date.now(),orderDate,deliveryDate:deliveryVal,deliveryText,items,shape:shapeLabel,quantity:totalBags,pricePerBag:items.length===1?items[0].pricePerBag:null,totalCost:parseFloat(totalCost),notes:notes||'\u2014',submittedt:new Date().toISOString()};
+  const orders=getOrders();orders.unshift(order);saveOrders(orders);
+  if(cfg.pubkey&&cfg.service&&cfg.template){
+    btn.disabled=true;status.textContent='Sending email\u2026';
+    try{
       emailjs.init(cfg.pubkey);
-      await emailjs.send(cfg.service, cfg.template, {
-        order_date:    formatDisplay(orderDate),
-        delivery_date: deliveryText,
-        items_list:    itemsList,
-        pasta_shape:   shapeLabel,
-        quantity:      totalBags,
-        price_per_bag: items.length === 1 ? items[0].pricePerBag.toFixed(2) : 'varies',
-        total_cost:    totalCost,
-        notes:         notes || 'None',
-        location:      cfg.location || 'Cornelly Restaurant Group'
+      await emailjs.send(cfg.service,cfg.template,{
+        order_date:formatDisplay(orderDate),delivery_date:deliveryText,
+        items_list:itemsList,pasta_shape:shapeLabel,quantity:totalBags,
+        price_per_bag:items.length===1?items[0].pricePerBag.toFixed(2):'varies',
+        total_cost:totalCost,notes:notes||'None',location:cfg.location||'Cornelly Restaurant Group'
       });
-      showToast('✅ Order saved & email sent to production kitchen!');
-      status.textContent = '';
-    } catch(err) {
-      console.error(err);
-      showToast('Order saved, but email failed: ' + (err.text || err.message || 'unknown error'), 'error');
-      status.textContent = '';
+      showToast('\u2705 Order saved & email sent to production kitchen!');status.textContent='';
+    }catch(err){
+      showToast('Order saved, but email failed: '+(err.text||err.message||'unknown error'),'error');
+      status.textContent='';
     }
-    btn.disabled = false;
-  } else {
-    showToast('⚠ Order saved locally. Configure EmailJS in Settings to send emails.', 'warning');
+    btn.disabled=false;
+  }else{
+    showToast('\u26a0 Order saved locally. Configure EmailJS in Settings to send emails.','warning');
   }
-
   resetOrderForm();
 }
-
-// ─────────────────────────────────────────
-//  PRODUCTS
-// ─────────────────────────────────────────
-function addProduct() {
-  const name  = document.getElementById('newProductName').value.trim();
-  const price = parseFloat(document.getElementById('newProductPrice').value);
-
-  if (!name)              { showToast('Please enter a pasta shape name.', 'error'); return; }
-  if (isNaN(price) || price < 0) { showToast('Please enter a valid price.', 'error'); return; }
-
-  const products = getProducts();
-  if (products.find(p => p.name.toLowerCase() === name.toLowerCase())) {
-    showToast('A product with that name already exists.', 'error'); return;
-  }
-
-  products.push({ name, price, addedAt: new Date().toISOString() });
-  saveProducts(products);
-  document.getElementById('newProductName').value = '';
-  document.getElementById('newProductPrice').value = '';
-  renderProducts();
-  refreshShapeDropdown();
-  showToast('Product added: ' + name);
+function addProduct(){
+  const name=document.getElementById('newProductName').value.trim();
+  const price=parseFloat(document.getElementById('newProductPrice').value);
+  if(!name){showToast('Please enter a pasta shape name.','error');return;}
+  if(isNaN(price)||price<0){showToast('Please enter a valid price.','error');return;}
+  const products=getProducts();
+  if(products.find(p=>p.name.toLowerCase()===name.toLowerCase())){showToast('A product with that name already exists.','error');return;}
+  products.push({name,price,addedAt:new Date().toISOString()});saveProducts(products);
+  document.getElementById('newProductName').value='';document.getElementById('newProductPrice').value='';
+  renderProducts();refreshShapeDropdown();showToast('Product added: '+name);
 }
-
-function deleteProduct(name) {
-  if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
-  saveProducts(getProducts().filter(p => p.name !== name));
-  renderProducts();
-  refreshShapeDropdown();
-  showToast(name + ' removed.');
+function deleteProduct(name){
+  if(!confirm('Delete "'+name+'"? This cannot be undone.'))return;
+  saveProducts(getProducts().filter(p=>p.name!==name));renderProducts();refreshShapeDropdown();showToast(name+' removed.');
 }
-
-function editProduct(name) {
-  const products = getProducts();
-  const p = products.find(x => x.name === name);
-  if (!p) return;
-  const newPrice = prompt('New price per bag for "' + name + '":', p.price);
-  if (newPrice === null) return;
-  const val = parseFloat(newPrice);
-  if (isNaN(val) || val < 0) { showToast('Invalid price.', 'error'); return; }
-  p.price = val;
-  saveProducts(products);
-  renderProducts();
-  refreshShapeDropdown();
-  showToast('Price updated for ' + name);
+function editProduct(name){
+  const products=getProducts();const p=products.find(x=>x.name===name);if(!p)return;
+  const newPrice=prompt('New price per bag for "'+name+'":',p.price);if(newPrice===null)return;
+  const val=parseFloat(newPrice);if(isNaN(val)||val<0){showToast('Invalid price.','error');return;}
+  p.price=val;saveProducts(products);renderProducts();refreshShapeDropdown();showToast('Price updated for '+name);
 }
-
-function renderProducts() {
-  const tbody = document.getElementById('productsBody');
-  const products = getProducts();
-  if (!products.length) {
-    tbody.innerHTML = '<tr class="no-data"><td colspan="4">No products yet. Add your first pasta shape above.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = products.map(p => `
-    <tr>
-      <td><strong>${esc(p.name)}</strong></td>
-      <td>$${parseFloat(p.price).toFixed(2)}</td>
-      <td style="color:var(--text-lt);font-size:12px;">${new Date(p.addedAt).toLocaleDateString()}</td>
-      <td>
-        <button class="btn btn-sm btn-outline" onclick="editProduct('${esc(p.name)}')">Edit Price</button>
-        <button class="btn btn-sm btn-danger" style="margin-left:6px;" onclick="deleteProduct('${esc(p.name)}')">Remove</button>
-      </td>
-    </tr>
-  `).join('');
+function renderProducts(){
+  const tbody=document.getElementById('productsBody');const products=getProducts();
+  if(!products.length){tbody.innerHTML='<tr class="no-data"><td colspan="4">No products yet. Add your first pasta shape above.</td></tr>';return;}
+  tbody.innerHTML=products.map(p=>`<tr><td><strong>${esc(p.name)}</strong></td><td>$${parseFloat(p.price).toFixed(2)}</td><td style="color:var(--text-lt);font-size:12px;">${new Date(p.addedAt).toLocaleDateString()}</td><td><button class="btn btn-sm btn-outline" onclick="editProduct('${esc(p.name)}')">Edit Price</button> <button class="btn btn-sm btn-danger" onclick="deleteProduct('${esc(p.name)}')">Remove</button></td></tr>`).join('');
 }
-
-// ─────────────────────────────────────────
-//  HISTORY
-// ─────────────────────────────────────────
-let currentPeriod = 'all';
-
-function setPeriod(period) {
-  currentPeriod = period;
-  document.querySelectorAll('.period-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.period === period);
-  });
-  const picker = document.getElementById('historyDatePicker');
-  picker.style.display = (period !== 'all') ? 'inline-block' : 'none';
-  if (period !== 'all' && !picker.value) picker.value = todayStr();
+let currentPeriod='all';
+function setPeriod(period){
+  currentPeriod=period;
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.toggle('active',b.dataset.period===period));
+  const picker=document.getElementById('historyDatePicker');
+  picker.style.display=(period!=='all')?'inline-block':'none';
+  if(period!=='all'&&!picker.value)picker.value=todayStr();
   renderHistory();
 }
-
-function getFilteredOrders() {
-  const all = getOrders();
-  if (currentPeriod === 'all') return all;
-
-  const picker = document.getElementById('historyDatePicker');
-  const ref = picker.value ? new Date(picker.value + 'T00:00:00') : new Date();
-  ref.setHours(0,0,0,0);
-
-  return all.filter(o => {
-    const d = new Date(o.orderDate + 'T00:00:00');
-    if (currentPeriod === 'day') {
-      return d.toDateString() === ref.toDateString();
-    } else if (currentPeriod === 'week') {
-      const startOfWeek = new Date(ref);
-      startOfWeek.setDate(ref.getDate() - ref.getDay());
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
-      return d >= startOfWeek && d <= endOfWeek;
-    } else if (currentPeriod === 'month') {
-      return d.getMonth() === ref.getMonth() && d.getFullYear() === ref.getFullYear();
-    } else if (currentPeriod === 'year') {
-      return d.getFullYear() === ref.getFullYear();
-    }
+function getFilteredOrders(){
+  const all=getOrders();if(currentPeriod==='all')return all;
+  const picker=document.getElementById('historyDatePicker');
+  const ref=picker.value?new Date(picker.value+'T00:00:00'):new Date();ref.setHours(0,0,0,0);
+  return all.filter(o=>{
+    const d=new Date(o.orderDate+'T00:00:00');
+    if(currentPeriod==='day')return d.toDateString()===ref.toDateString();
+    if(currentPeriod==='week'){const s=new Date(ref);s.setDate(ref.getDate()-ref.getDay());const e=new Date(s);e.setDate(s.getDate()+6);return d>=s&&d<=e;}
+    if(currentPeriod==='month')return d.getMonth()===ref.getMonth()&&d.getFullYear()===ref.getFullYear();
+    if(currentPeriod==='year')return d.getFullYear()===ref.getFullYear();
     return true;
   });
 }
-
-function renderHistory() {
-  const orders = getFilteredOrders();
-  const tbody = document.getElementById('historyBody');
-  const totalBags = orders.reduce((s, o) => s + o.quantity, 0);
-  const totalCost = orders.reduce((s, o) => s + o.totalCost, 0);
-
-  document.getElementById('sumOrders').textContent = orders.length;
-  document.getElementById('sumBags').textContent   = totalBags;
-  document.getElementById('sumCost').textContent   = '$' + totalCost.toFixed(2);
-
-  if (!orders.length) {
-    tbody.innerHTML = '<tr class="no-data"><td colspan="8">No orders found for this period.</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = orders.map(o => {
-    const priceCell = o.pricePerBag != null
-      ? '$' + parseFloat(o.pricePerBag).toFixed(2)
-      : '<span style="color:var(--text-lt)">varies</span>';
-    return `
-    <tr>
-      <td>${formatDisplay(o.orderDate)}</td>
-      <td>${esc(o.deliveryText || o.deliveryDate)}</td>
-      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.shape)}"><strong>${esc(o.shape)}</strong></td>
-      <td>${o.quantity}</td>
-      <td>${priceCell}</td>
-      <td><strong>$${parseFloat(o.totalCost).toFixed(2)}</strong></td>
-      <td style="font-size:12px;color:var(--text-lt);max-width:160px;white-space:nowraw;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.notes)}">${esc(o.notes)}</td>
-      <td>
-        <button class="btn btn-sm btn-danger" onclick="deleteOrder(${o.id})">Delete</button>
-      </td>
-    </tr>`;
+function renderHistory(){
+  const orders=getFilteredOrders();const tbody=document.getElementById('historyBody');
+  document.getElementById('sumOrders').textContent=orders.length;
+  document.getElementById('sumBags').textContent=orders.reduce((s,o)=>s+o.quantity,0);
+  document.getElementById('sumCost').textContent='$'+orders.reduce((s,o)=>s+o.totalCost,0).toFixed(2);
+  if(!orders.length){tbody.innerHTML='<tr class="no-data"><td colspan="8">No orders found for this period.</td></tr>';return;}
+  tbody.innerHTML=orders.map(o=>{
+    const priceCell=o.pricePerBag!=null?'$'+parseFloat(o.pricePerBag).toFixed(2):'<span style="color:var(--text-lt)">varies</span>';
+    return `<tr><td>${formatDisplay(o.orderDate)}</td><td>${esc(o.deliveryText||o.deliveryDate)}</td><td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.shape)}"><strong>${esc(o.shape)}</strong></td><td>${o.quantity}</td><td>${priceCell}</td><td><strong>$${parseFloat(o.totalCost).toFixed(2)}</strong></td><td style="font-size:12px;color:var(--text-lt);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.notes)}">${esc(o.notes)}</td><td><button class="btn btn-sm btn-danger" onclick="deleteOrder(${o.id})">Delete</button></td></tr>`;
   }).join('');
 }
-
-function deleteOrder(id) {
-  if (!confirm('Delete this order record?')) return;
-  saveOrders(getOrders().filter(o => o.id !== id));
-  renderHistory();
-  showToast('Order record deleted.');
+function deleteOrder(id){
+  if(!confirm('Delete this order record?'))return;
+  saveOrders(getOrders().filter(o=>o.id!==id));renderHistory();showToast('Order record deleted.');
 }
-
-// ─────────────────────────────────────────
-//  SETTINGS
-// ─────────────────────────────────────────
-function loadConfig() {
-  const cfg = getConfig();
-  document.getElementById('cfg-pubkey').value   = cfg.pubkey   || '';
-  document.getElementById('cfg-service').value  = cfg.service  || '';
-  document.getElementById('cfg-template').value = cfg.template || '';
-  document.getElementById('cfg-location').value = cfg.location || 'Cornelly Queen Anne';
+function loadConfig(){
+  const cfg=getConfig();
+  document.getElementById('cfg-pubkey').value=cfg.pubkey||''
+  document.getElementById('cfg-service').value=cfg.service||''
+  document.getElementById('cfg-template').value=cfg.template||''
+  document.getElementById('cfg-location').value=cfg.location||'Cornelly Queen Anne'
   updateConfigBadge(cfg);
 }
-
-function updateConfigBadge(cfg) {
-  const badge = document.getElementById('configStatusBadge');
-  if (cfg && cfg.pubkey && cfg.service && cfg.template) {
-    badge.className = 'config-status ok';
-    badge.textContent = '✓ EmailJS configured — emails will send on order submission';
-  } else {
-    badge.className = 'config-status bad';
-    badge.textContent = '⚠ EmailJS not configured — orders will be saved locally only';
-  }
+function updateConfigBadge(cfg){
+  const badge=document.getElementById('configStatusBadge');
+  if(cfg&&cfg.pubkey&&cfg.service&&cfg.template){badge.className='config-status ok';badge.textContent='\u2713 EmailJS configured \u2014 emails will send on order submission';}
+  else{badge.className='config-status bad';badge.textContent='\u26a0 EmailJS not configured \u2014 orders will be saved locally only';}
 }
-
-function saveConfig() {
-  const cfg = {
-    pubkey:   document.getElementById('cfg-pubkey').value.trim(),
-    service:  document.getElementById('cfg-service').value.trim(),
-    template: document.getElementById('cfg-template').value.trim(),
-    location: document.getElementById('cfg-location').value.trim() || 'Cornelly Restaurant Group'
-  };
-  saveConfig2(cfg);
-  updateConfigBadge(cfg);
-  showToast('Settings saved!');
+function saveConfig(){
+  const cfg={pubkey:document.getElementById('cfg-pubkey').value.trim(),service:document.getElementById('cfg-service').value.trim(),template:document.getElementById('cfg-template').value.trim(),location:document.getElementById('cfg-location').value.trim()||'Cornelly Restaurant Group'};
+  saveConfig2(cfg);updateConfigBadge(cfg);showToast('Settings saved!');
 }
-
-async function testEmail() {
-  const cfg = getConfig();
-  if (!cfg.pubkey || !cfg.service || !cfg.template) {
-    showToast('Please save your EmailJS settings first.', 'error'); return;
-  }
-  showToast('Sending test email…');
-  try {
+async function testEmail(){
+  const cfg=getConfig();
+  if(!cfg.pubkey||!cfg.service||!cfg.template){showToast('Please save your EmailJS settings first.','error');return;}
+  showToast('Sending test email\u2026');
+  try{
     emailjs.init(cfg.pubkey);
-    await emailjs.send(cfg.service, cfg.template, {
-      order_date:    'TEST — ' + formatDisplay(todayStr()),
-      delivery_date: 'TEST — Tomorrow',
-      items_list:    'Rigatoni: 5 bags @ $12.00/bag = $60.00\nTagliatelle: 3 bags @ $14.00/bag = $42.00',
-      pasta_shape:   'Rigatoni ×5, Tagliatelle ×3',
-      quantity:      '8',
-      price_per_bag: 'varies',
-      total_cost:    '102.00',
-      notes:         'This is a test email from the Pasta Order System.',
-      location:      cfg.location || 'Cornelly Restaurant Group'
-    });
-    showToast('✅ Test email sent! Check doughordering@cornellyqueenanne.com');
-  } catch(err) {
-    console.error(err);
-    showToast('Test failed: ' + (err.text || err.message || JSON.stringify(err)), 'error');
-  }
+    await emailjs.send(cfg.service,cfg.template,{order_date:'TEST \u2014 '+formatDisplay(todayStr()),delivery_date:'TEST \u2014 Tomorrow',items_list:'Rigatoni: 5 bags @ $12.00/bag = $60.00\nTagliatelle: 3 bags @ $14.00/bag = $42.00',pasta_shape:'Rigatoni \xd75, Tagliatelle \xd73',quantity:'8',price_per_bag:'varies',total_cost:'102.00',notes:'This is a test email from the Pasta Order System.',location:cfg.location||'Cornelly Restaurant Group'});
+    showToast('\u2705 Test email sent! Check doughordering@cornellyqueenanne.com');
+  }catch(err){showToast('Test failed: '+(err.text||err.message||JSON.stringify(err)),'error');}
 }
-
-function copyTemplate() {
-  const txt = `Hi Production Kitchen,
-
-A new pasta order has been placed from {{location}}.
-
-Order Date:     {{order_date}}
-Delivery Date:  {{delivery_date}}
-
-Items Ordered:
-{{items_list}}
-
-Total Cost:     ${{total_cost}}
-
-Special Notes:
-{{notes}}
-
-Please confirm receipt by replying to this email.
-
-Thank you,
-{{location}}`;
-  navigator.clipboard.writeText(txt).then(() => showToast('Template copied to clipboard!'));
+function copyTemplate(){
+  const txt='Hi Production Kitchen,\n\nA new pasta order has been placed from {{location}}.\n\nOrder Date:     {{order_date}}\nDelivery Date:  {{delivery_date}}\n\nItems Ordered:\n{{items_list}}\n\nTotal Cost:     ${{total_cost}}\n\nSpecial Notes:\n{{notes}}\n\nThank you,\n{{location}}';
+  navigator.clipboard.writeText(txt).then(()=>showToast('Template copied to clipboard!'));
 }
-
-function exportData() {
-  const data = {
-    products: getProducts(),
-    orders:   getOrders(),
-    config:   getConfig(),
-    exported: new Date().toISOString()
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'pasta-orders-backup-' + todayStr() + '.json';
-  a.click();
+function exportData(){
+  const data={products:getProducts(),orders:getOrders(),config:getConfig(),exported:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pasta-orders-backup-'+todayStr()+'.json';a.click();
 }
-
-function clearAllData() {
-  if (!confirm('This will permanently delete ALL products, orders, and settings. Are you sure?')) return;
-  if (!confirm('Are you absolutely sure? This cannot be undone.')) return;
-  localStorage.removeItem('pasta_products');
-  localStorage.removeItem('pasta_orders');
-  localStorage.removeItem('pasta_config');
-  showToast('All data cleared.');
-  loadConfig();
+function clearAllData(){
+  if(!confirm('This will permanently delete ALL products, orders, and settings. Are you sure?'))return;
+  if(!confirm('Are you absolutely sure? This cannot be undone.'))return;
+  localStorage.removeItem('pasta_products');localStorage.removeItem('pasta_orders');localStorage.removeItem('pasta_config');
+  showToast('All data cleared.');loadConfig();
 }
-
-// ─────────────────────────────────────────
-//  UTILITIES
-// ─────────────────────────────────────────
-function esc(str) {
-  if (str == null) return '';
-  return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+function esc(str){
+  if(str==null)return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
-
-// ─────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  initOrderForm();
-});
+document.addEventListener('DOMContentLoaded',()=>{initOrderForm();});
 </script>
 </body>
 </html>
