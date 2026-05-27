@@ -912,9 +912,7 @@ async function submitOrder() {
   const totalCost  = items.reduce((s, it) => s + it.subtotal, 0).toFixed(2);
   const totalBags  = items.reduce((s, it) => s + it.quantity, 0);
   const shapeLabel = items.map(it => it.shape + ' ×' + it.quantity).join(', ');
-  const itemsList  = items.map(it =>
-    it.shape + ': ' + it.quantity + ' bags @ $' + it.pricePerBag.toFixed(2) + '/bag = $' + it.subtotal.toFixed(2)
-  ).join('\n');
+  const itemsList  = items.map(it => '• ' + it.quantity + ' bags ' + it.shape).join('\n');
 
   const cfg    = getConfig();
   const btn    = document.getElementById('submitBtn');
