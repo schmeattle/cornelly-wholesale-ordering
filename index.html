@@ -179,6 +179,45 @@
       color: var(--green);
     }
 
+    /* ── ORDER ITEM ROWS ── */
+    .order-items { display: flex; flex-direction: column; gap: 8px; }
+    .order-item-row {
+      display: grid;
+      grid-template-columns: 1fr 110px 72px 32px;
+      gap: 10px;
+      align-items: end;
+      background: var(--gray-lt);
+      border: 1.5px solid var(--gray);
+      border-radius: 8px;
+      padding: 12px 14px 10px;
+    }
+    .order-item-row .field { margin: 0; }
+    .order-item-row .field label { font-size: 11px; }
+    .item-subtotal {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--green);
+      padding-bottom: 10px;
+      white-space: nowrap;
+      text-align: right;
+    }
+    .item-remove {
+      background: transparent;
+      border: 1.5px solid var(--gray);
+      border-radius: 6px;
+      color: var(--text-lt);
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      width: 32px;
+      height: 38px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1px;
+      transition: background .12s, border-color .12s, color .12s;
+      font-family: inherit;
+    }
+    .item-remove:hover { background: var(--red); border-color: var(--red); color: #fff; }
+
     /* ── BUTTONS ── */
     .btn {
       display: inline-flex;
@@ -440,16 +479,10 @@
           <select id="deliveryDate"></select>
         </div>
 
-        <div class="field">
-          <label>Pasta Shape</label>
-          <select id="pastaShape" onchange="updateCost()">
-            <option value="">— Select a shape —</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Quantity (bags)</label>
-          <input type="number" id="quantity" min="1" step="1" placeholder="e.g. 10" oninput="updateCost()" />
+        <div class="field full">
+          <label>Pasta Items</label>
+          <div id="orderItems" class="order-items"></div>
+          <button class="btn btn-sm btn-outline" onclick="addOrderRow()" style="margin-top:10px;">+ Add Another Item</button>
         </div>
 
         <div class="field full">
@@ -458,9 +491,9 @@
         </div>
 
         <div class="field full">
-          <label>Estimated Order Cost</label>
+          <label>Estimated Order Total</label>
           <div class="cost-display">
-            <span>Price per bag × quantity</span>
+            <span>All items combined</span>
             <span class="cost-value" id="costDisplay">—</span>
           </div>
         </div>
@@ -583,7 +616,7 @@
         </ol>
         <div style="margin-top:12px; padding:10px 14px; background:var(--white); border-radius:6px; font-size:12px; font-family:monospace; line-height:1.8; color:var(--text);">
           Available template variables:<br>
-          <strong>{{order_date}}</strong> &nbsp;{{delivery_date}}&nbsp; {{pasta_shape}}&nbsp; {{quantity}}&nbsp; {{price_per_bag}}&nbsp; {{total_cost}}&nbsp; {{notes}}&nbsp; {{location}}
+          <strong>{{order_date}}</strong> &nbsp;{{delivery_date}}&nbsp; {{items_list}}&nbsp; {{total_cost}}&nbsp; {{notes}}&nbsp; {{location}}&nbsp; <span style="color:var(--text-lt)">{{pasta_shape}} {{quantity}} {{price_per_bag}} (legacy single-item)</span>
         </div>
       </div>
 
@@ -626,9 +659,9 @@ A new pasta order has been placed from {{location}}.
 Order Date:     {{order_date}}
 Delivery Date:  {{delivery_date}}
 
-Pasta Shape:    {{pasta_shape}}
-Quantity:       {{quantity}} bags
-Price per Bag:  ${{price_per_bag}}
+Items Ordered:
+{{items_list}}
+
 Total Cost:     ${{total_cost}}
 
 Special Notes:
@@ -736,18 +769,43 @@ function populateDeliveryDates() {
 }
 
 // ─────────────────────────────────────────
-//  ORDER FORM
+//  ORDER FORM — MULTI-ITEM
 // ─────────────────────────────────────────
-function initOrderForm() {
-  document.getElementById('orderDate').value = todayStr();
-  populateDeliveryDates();
-  refreshShapeDropdown();
+let _rowCount = 0;
+
+function addOrderRow() {
+  _rowCount++;
+  const idx = _rowCount;
+  const container = document.getElementById('orderItems');
+  const row = document.createElement('div');
+  row.className = 'order-item-row';
+  row.id = 'order-row-' + idx;
+  row.innerHTML = `
+    <div class="field">
+      <label>Pasta Shape</label>
+      <select id="shape-${idx}" onchange="updateCost();maybeAutoAddRow(${idx})">
+        <option value="">— Select —</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Bags</label>
+      <input type="number" id="qty-${idx}" min="1" step="1" placeholder="0"
+             oninput="updateCost();maybeAutoAddRow(${idx})" style="width:100%"/>
+    </div>
+    <span class="item-subtotal" id="sub-${idx}">—</span>
+    <button class="item-remove" onclick="removeOrderRow(${idx})" title="Remove this item">×</button>
+  `;
+  container.appendChild(row);
+  _fillRowDropdown(idx);
+  _updateRemoveButtons();
+  updateCost();
 }
 
-function refreshShapeDropdown() {
-  const sel = document.getElementById('pastaShape');
+function _fillRowDropdown(idx) {
+  const sel = document.getElementById('shape-' + idx);
+  if (!sel) return;
   const prev = sel.value;
-  sel.innerHTML = '<option value="">— Select a shape —</option>';
+  sel.innerHTML = '<option value="">— Select —</option>';
   getProducts().forEach(p => {
     const o = document.createElement('option');
     o.value = p.name;
@@ -756,33 +814,84 @@ function refreshShapeDropdown() {
     sel.appendChild(o);
   });
   if (prev) sel.value = prev;
+}
+
+function _updateRemoveButtons() {
+  const rows = document.querySelectorAll('.order-item-row');
+  rows.forEach(r => {
+    const btn = r.querySelector('.item-remove');
+    if (btn) btn.style.visibility = rows.length > 1 ? 'visible' : 'hidden';
+  });
+}
+
+function removeOrderRow(idx) {
+  const row = document.getElementById('order-row-' + idx);
+  if (!row) return;
+  const rows = document.querySelectorAll('.order-item-row');
+  if (rows.length <= 1) return; // never remove last row
+  row.remove();
+  _updateRemoveButtons();
   updateCost();
 }
 
-function getSelectedPrice() {
-  const sel = document.getElementById('pastaShape');
-  const opt = sel.options[sel.selectedIndex];
-  return opt && opt.dataset.price ? parseFloat(opt.dataset.price) : null;
+function maybeAutoAddRow(idx) {
+  const shape = document.getElementById('shape-' + idx)?.value;
+  const qty   = document.getElementById('qty-'   + idx)?.value;
+  if (!shape || !qty || parseInt(qty) < 1) return;
+  // Only auto-add if this is the last row
+  const rows = document.querySelectorAll('.order-item-row');
+  const last = rows[rows.length - 1];
+  if (last && last.id === 'order-row-' + idx) addOrderRow();
+}
+
+function _getRowPrice(idx) {
+  const sel = document.getElementById('shape-' + idx);
+  const opt = sel?.options[sel.selectedIndex];
+  return (opt && opt.dataset.price) ? parseFloat(opt.dataset.price) : null;
 }
 
 function updateCost() {
-  const price = getSelectedPrice();
-  const qty = parseInt(document.getElementById('quantity').value, 10);
+  let total = 0;
+  document.querySelectorAll('.order-item-row').forEach(row => {
+    const idx   = row.id.replace('order-row-', '');
+    const price = _getRowPrice(idx);
+    const qty   = parseInt(document.getElementById('qty-' + idx)?.value, 10);
+    const subEl = document.getElementById('sub-' + idx);
+    if (price !== null && qty > 0) {
+      const sub = price * qty;
+      total += sub;
+      if (subEl) subEl.textContent = '$' + sub.toFixed(2);
+    } else {
+      if (subEl) subEl.textContent = '—';
+    }
+  });
   const disp = document.getElementById('costDisplay');
-  if (price !== null && qty > 0) {
-    disp.textContent = '$' + (price * qty).toFixed(2);
-  } else {
-    disp.textContent = '—';
-  }
+  if (disp) disp.textContent = total > 0 ? '$' + total.toFixed(2) : '—';
+}
+
+function refreshShapeDropdown() {
+  // Refresh all row dropdowns (called when products change)
+  document.querySelectorAll('.order-item-row').forEach(row => {
+    _fillRowDropdown(row.id.replace('order-row-', ''));
+  });
+  updateCost();
+}
+
+function initOrderForm() {
+  document.getElementById('orderDate').value = todayStr();
+  populateDeliveryDates();
+  document.getElementById('orderItems').innerHTML = '';
+  _rowCount = 0;
+  addOrderRow();
 }
 
 function resetOrderForm() {
   document.getElementById('orderDate').value = todayStr();
   populateDeliveryDates();
-  document.getElementById('pastaShape').value = '';
-  document.getElementById('quantity').value = '';
   document.getElementById('notes').value = '';
-  updateCost();
+  document.getElementById('orderItems').innerHTML = '';
+  _rowCount = 0;
+  addOrderRow();
 }
 
 async function submitOrder() {
@@ -790,41 +899,55 @@ async function submitOrder() {
   const deliverySel  = document.getElementById('deliveryDate');
   const deliveryVal  = deliverySel.value;
   const deliveryText = deliverySel.options[deliverySel.selectedIndex]?.text || deliveryVal;
-  const shape        = document.getElementById('pastaShape').value;
-  const qty          = parseInt(document.getElementById('quantity').value, 10);
   const notes        = document.getElementById('notes').value.trim();
-  const price        = getSelectedPrice();
 
-  // Validation
-  if (!orderDate)      { showToast('Please select an order date.', 'error'); return; }
-  if (!deliveryVal)    { showToast('Please select a delivery date.', 'error'); return; }
-  if (!shape)          { showToast('Please select a pasta shape.', 'error'); return; }
-  if (!qty || qty < 1) { showToast('Please enter a valid quantity.', 'error'); return; }
+  if (!orderDate)   { showToast('Please select an order date.', 'error'); return; }
+  if (!deliveryVal) { showToast('Please select a delivery date.', 'error'); return; }
 
-  const totalCost = (price * qty).toFixed(2);
+  // Collect filled item rows
+  const items = [];
+  let invalid = false;
+  document.querySelectorAll('.order-item-row').forEach(row => {
+    const idx   = row.id.replace('order-row-', '');
+    const shape = document.getElementById('shape-' + idx)?.value;
+    const qty   = parseInt(document.getElementById('qty-' + idx)?.value, 10);
+    const price = _getRowPrice(idx);
+    if (!shape && !(qty > 0)) return; // skip blank rows
+    if (!shape) { showToast('Please select a pasta shape for each item.', 'error'); invalid = true; return; }
+    if (!qty || qty < 1) { showToast('Please enter a valid quantity for each item.', 'error'); invalid = true; return; }
+    items.push({ shape, quantity: qty, pricePerBag: price, subtotal: parseFloat((price * qty).toFixed(2)) });
+  });
+  if (invalid) return;
+  if (!items.length) { showToast('Please add at least one pasta item.', 'error'); return; }
 
-  const cfg = getConfig();
-  const btn = document.getElementById('submitBtn');
+  const totalCost  = items.reduce((s, it) => s + it.subtotal, 0).toFixed(2);
+  const totalBags  = items.reduce((s, it) => s + it.quantity, 0);
+  const shapeLabel = items.map(it => it.shape + ' ×' + it.quantity).join(', ');
+  const itemsList  = items.map(it =>
+    it.shape + ': ' + it.quantity + ' bags @ $' + it.pricePerBag.toFixed(2) + '/bag = $' + it.subtotal.toFixed(2)
+  ).join('\n');
+
+  const cfg    = getConfig();
+  const btn    = document.getElementById('submitBtn');
   const status = document.getElementById('submitStatus');
 
-  // Save order to history
   const order = {
     id: Date.now(),
     orderDate,
-    deliveryDate: deliveryVal,
+    deliveryDate:  deliveryVal,
     deliveryText,
-    shape,
-    quantity: qty,
-    pricePerBag: price,
-    totalCost: parseFloat(totalCost),
-    notes: notes || '—',
-    submittedAt: new Date().toISOString()
+    items,                            // full line-item array
+    shape:         shapeLabel,        // summary string (history display)
+    quantity:      totalBags,
+    pricePerBag:   items.length === 1 ? items[0].pricePerBag : null,
+    totalCost:     parseFloat(totalCost),
+    notes:         notes || '—',
+    submittedAt:   new Date().toISOString()
   };
   const orders = getOrders();
   orders.unshift(order);
   saveOrders(orders);
 
-  // Send email if configured
   if (cfg.pubkey && cfg.service && cfg.template) {
     btn.disabled = true;
     status.textContent = 'Sending email…';
@@ -833,9 +956,10 @@ async function submitOrder() {
       await emailjs.send(cfg.service, cfg.template, {
         order_date:    formatDisplay(orderDate),
         delivery_date: deliveryText,
-        pasta_shape:   shape,
-        quantity:      qty,
-        price_per_bag: price.toFixed(2),
+        items_list:    itemsList,
+        pasta_shape:   shapeLabel,
+        quantity:      totalBags,
+        price_per_bag: items.length === 1 ? items[0].pricePerBag.toFixed(2) : 'varies',
         total_cost:    totalCost,
         notes:         notes || 'None',
         location:      cfg.location || 'Cornelly Restaurant Group'
@@ -980,20 +1104,24 @@ function renderHistory() {
     return;
   }
 
-  tbody.innerHTML = orders.map(o => `
+  tbody.innerHTML = orders.map(o => {
+    const priceCell = o.pricePerBag != null
+      ? '$' + parseFloat(o.pricePerBag).toFixed(2)
+      : '<span style="color:var(--text-lt)">varies</span>';
+    return `
     <tr>
       <td>${formatDisplay(o.orderDate)}</td>
       <td>${esc(o.deliveryText || o.deliveryDate)}</td>
-      <td><strong>${esc(o.shape)}</strong></td>
+      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.shape)}"><strong>${esc(o.shape)}</strong></td>
       <td>${o.quantity}</td>
-      <td>$${parseFloat(o.pricePerBag).toFixed(2)}</td>
+      <td>${priceCell}</td>
       <td><strong>$${parseFloat(o.totalCost).toFixed(2)}</strong></td>
       <td style="font-size:12px;color:var(--text-lt);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.notes)}">${esc(o.notes)}</td>
       <td>
         <button class="btn btn-sm btn-danger" onclick="deleteOrder(${o.id})">Delete</button>
       </td>
-    </tr>
-  `).join('');
+    </tr>`;
+  }).join('');
 }
 
 function deleteOrder(id) {
@@ -1049,10 +1177,11 @@ async function testEmail() {
     await emailjs.send(cfg.service, cfg.template, {
       order_date:    'TEST — ' + formatDisplay(todayStr()),
       delivery_date: 'TEST — Tomorrow',
-      pasta_shape:   'Test Shape (Rigatoni)',
-      quantity:      '5',
-      price_per_bag: '12.00',
-      total_cost:    '60.00',
+      items_list:    'Rigatoni: 5 bags @ $12.00/bag = $60.00\nTagliatelle: 3 bags @ $14.00/bag = $42.00',
+      pasta_shape:   'Rigatoni ×5, Tagliatelle ×3',
+      quantity:      '8',
+      price_per_bag: 'varies',
+      total_cost:    '102.00',
       notes:         'This is a test email from the Pasta Order System.',
       location:      cfg.location || 'Cornelly Restaurant Group'
     });
@@ -1071,9 +1200,9 @@ A new pasta order has been placed from {{location}}.
 Order Date:     {{order_date}}
 Delivery Date:  {{delivery_date}}
 
-Pasta Shape:    {{pasta_shape}}
-Quantity:       {{quantity}} bags
-Price per Bag:  ${{price_per_bag}}
+Items Ordered:
+{{items_list}}
+
 Total Cost:     ${{total_cost}}
 
 Special Notes:
