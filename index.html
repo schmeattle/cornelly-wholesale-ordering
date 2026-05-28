@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pasta Order System â Cornelly Restaurant Group</title>
+<title>Pasta Order System — Cornelly Restaurant Group</title>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='7' y='1' width='2.5' height='12' rx='1.2' fill='%231e3a2f'/%3E%3Crect x='11.5' y='1' width='2.5' height='12' rx='1.2' fill='%231e3a2f'/%3E%3Crect x='16' y='1' width='2.5' height='12' rx='1.2' fill='%231e3a2f'/%3E%3Crect x='20.5' y='1' width='2.5' height='12' rx='1.2' fill='%231e3a2f'/%3E%3Crect x='7' y='13' width='16' height='2.5' fill='%231e3a2f'/%3E%3Crect x='14.5' y='15.5' width='3' height='15.5' rx='1.2' fill='%231e3a2f'/%3E%3C/svg%3E">
 <style>
@@ -199,7 +199,7 @@ font-weight: 600; padding: 6px 14px; border-radius: 20px; margin-bottom: 20px;
 .config-status.ok { background: #e8f5ee; color: var(--green-ok); }
 .config-status.bad { background: #fdecea; color: var(--red); }
 
-/* ââ INVOICE MODAL ââ */
+/* ── INVOICE MODAL ── */
 #invoice-modal {
 display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55);
 z-index: 9998; align-items: flex-start; justify-content: center;
@@ -210,7 +210,7 @@ background: #fff; border-radius: 12px; padding: 40px 48px;
 max-width: 640px; width: 100%; margin: auto; box-shadow: 0 8px 40px rgba(0,0,0,.2);
 }
 
-/* ââ PRINT ââ */
+/* ── PRINT ── */
 @media print {
 body > header, body > main, #toast, #settings-gate-overlay { display: none !important; }
 #invoice-modal {
@@ -236,7 +236,7 @@ main { padding: 20px 16px 60px; }
 
 <header>
 <div class="brand">
-<span class="brand-icon">ð</span>
+<span class="brand-icon">🍝</span>
 <div class="brand-text">
 <h1>Pasta Order System</h1>
 <p>Cornelly Restaurant Group</p>
@@ -274,18 +274,18 @@ main { padding: 20px 16px 60px; }
 </div>
 <div class="field full">
 <label>Special Notes</label>
-<textarea id="notes" placeholder="Any special instructions, substitutions, or delivery notesâ¦"></textarea>
+<textarea id="notes" placeholder="Any special instructions, substitutions, or delivery notes…"></textarea>
 </div>
 <div class="field full">
 <label>Estimated Order Total</label>
 <div class="cost-display">
 <span>All items combined</span>
-<span class="cost-value" id="costDisplay">â</span>
+<span class="cost-value" id="costDisplay">—</span>
 </div>
 </div>
 </div>
 <div class="btn-row" style="margin-top:24px;">
-<button class="btn btn-primary" id="submitBtn" onclick="submitOrder()">ð§ Submit Order &amp; Email Kitchen</button>
+<button class="btn btn-primary" id="submitBtn" onclick="submitOrder()">📧 Submit Order &amp; Email Kitchen</button>
 <button class="btn btn-outline" onclick="resetOrderForm()">Clear</button>
 <span id="submitStatus" style="font-size:13px;color:var(--text-lt);"></span>
 </div>
@@ -301,7 +301,7 @@ main { padding: 20px 16px 60px; }
 <div class="inline-form">
 <div class="field" style="flex:2">
 <label>Product Name</label>
-<input type="text" id="newProductName" placeholder="e.g. Rigatoni, Chocolate Chip Cookieâ¦" />
+<input type="text" id="newProductName" placeholder="e.g. Rigatoni, Chocolate Chip Cookie…" />
 </div>
 <div class="field" style="flex:1">
 <label>Type</label>
@@ -352,15 +352,15 @@ main { padding: 20px 16px 60px; }
 </div>
 <div class="summary-strip">
 <div class="summary-chip">
-<span class="chip-val" id="sumOrders">â</span>
+<span class="chip-val" id="sumOrders">—</span>
 <span class="chip-lbl">Orders</span>
 </div>
 <div class="summary-chip">
-<span class="chip-val" id="sumBags">â</span>
+<span class="chip-val" id="sumBags">—</span>
 <span class="chip-lbl">Bags Ordered</span>
 </div>
 <div class="summary-chip">
-<span class="chip-val" id="sumCost">â</span>
+<span class="chip-val" id="sumCost">—</span>
 <span class="chip-lbl">Total Spend</span>
 </div>
 </div>
@@ -390,19 +390,19 @@ main { padding: 20px 16px 60px; }
 <div class="card">
 <h2>Email Configuration (EmailJS)</h2>
 <div class="settings-info">
-<strong>One-time setup â takes about 5 minutes:</strong>
+<strong>One-time setup — takes about 5 minutes:</strong>
 <ol>
 <li>Go to <a href="https://www.emailjs.com" target="_blank">emailjs.com</a> and create a free account.</li>
-<li>In EmailJS â <strong>Email Services</strong>, add your email provider and copy the <strong>Service ID</strong>.</li>
-<li>In EmailJS â <strong>Email Templates</strong>, create a template with <strong>To Email</strong> set to <code>doughordering@cornellyqueenanne.com</code>, then copy the <strong>Template ID</strong>.</li>
-<li>In EmailJS â <strong>Account â General</strong>, copy your <strong>Public Key</strong>.</li>
+<li>In EmailJS → <strong>Email Services</strong>, add your email provider and copy the <strong>Service ID</strong>.</li>
+<li>In EmailJS → <strong>Email Templates</strong>, create a template with <strong>To Email</strong> set to <code>doughordering@cornellyqueenanne.com</code>, then copy the <strong>Template ID</strong>.</li>
+<li>In EmailJS → <strong>Account → General</strong>, copy your <strong>Public Key</strong>.</li>
 <li>Paste all three values below and click Save.</li>
 </ol>
 <div style="margin-top:12px;padding:10px 14px;background:var(--white);border-radius:6px;font-size:12px;font-family:monospace;line-height:1.8;color:var(--text);">
 Available variables: <strong>{{order_date}}</strong> {{delivery_date}} {{items_list}} {{total_cost}} {{notes}} {{location}}
 </div>
 </div>
-<div id="configStatusBadge" class="config-status bad">â  EmailJS not configured</div>
+<div id="configStatusBadge" class="config-status bad">⚠ EmailJS not configured</div>
 <div class="form-grid" style="max-width:560px;">
 <div class="field full">
 <label>EmailJS Public Key</label>
@@ -428,7 +428,7 @@ Available variables: <strong>{{order_date}}</strong> {{delivery_date}} {{items_l
 </div>
 
 <div class="card">
-<h2>Email Template â Suggested Body</h2>
+<h2>Email Template — Suggested Body</h2>
 <div style="font-size:13px;color:var(--text-lt);margin-bottom:12px;">
 Copy this into your EmailJS template body. EmailJS fills in the <code>{{variables}}</code> automatically.
 </div>
@@ -449,7 +449,7 @@ Special Notes:({{notes}}
 Thank you,
 {{location}}</div>
 <div class="btn-row" style="margin-top:14px;">
-<button class="btn btn-sm btn-outline" onclick="copyTemplate()">ð Copy Template</button>
+<button class="btn btn-sm btn-outline" onclick="copyTemplate()">📋 Copy Template</button>
 </div>
 </div>
 
@@ -459,8 +459,8 @@ Thank you,
 All order history and product data is stored locally in your browser. Export a backup before clearing.
 </p>
 <div class="btn-row">
-<button class="btn btn-outline" onclick="exportData()">â¬ Export Data (JSON)</button>
-<button class="btn btn-danger btn-sm" onclick="clearAllData()">ð Clear All Data</button>
+<button class="btn btn-outline" onclick="exportData()">⬇ Export Data (JSON)</button>
+<button class="btn btn-danger btn-sm" onclick="clearAllData()">🗑 Clear All Data</button>
 </div>
 </div>
 </section>
@@ -571,8 +571,8 @@ const d = new Date(today); d.setDate(today.getDate() + i);
 const iso = d.toISOString().slice(0,10);
 const opt = document.createElement('option');
 opt.value = iso;
-if (i===0) opt.text = 'Today â ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-else if (i===1) opt.text = 'Tomorrow â ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+if (i===0) opt.text = 'Today — ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+else if (i===1) opt.text = 'Tomorrow — ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
 else opt.text = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
 sel.appendChild(opt);
 }
@@ -592,15 +592,15 @@ row.innerHTML = `
 <div class="field">
 <label>Item</label>
 <select id="shape-${idx}" onchange="onShapeChange(${idx})">
-<option value="">â Select â</option>
+<option value="">— Select —</option>
 </select>
 </div>
 <div class="field">
 <label id="qty-label-${idx}">Qty</label>
 <input type="number" id="qty-${idx}" min="1" step="1" placeholder="0" oninput="updateCost()" style="width:100%"/>
 </div>
-<span class="item-subtotal" id="sub-${idx}">â</span>
-<button class="item-remove" onclick="removeOrderRow(${idx})" title="Remove">Ã</button>
+<span class="item-subtotal" id="sub-${idx}">—</span>
+<button class="item-remove" onclick="removeOrderRow(${idx})" title="Remove">×</button>
 `;
 container.appendChild(row);
 _fillRowDropdown(idx);
@@ -611,12 +611,12 @@ function _fillRowDropdown(idx) {
 const sel = document.getElementById('shape-' + idx);
 if (!sel) return;
 const prev = sel.value;
-sel.innerHTML = '<option value="">â Select â</option>';
+sel.innerHTML = '<option value="">— Select —</option>';
 getProducts().forEach(p => {
 const o = document.createElement('option');
 o.value = p.name; o.dataset.price = p.price;
 const unit = getUnit(p.type);
-o.text = p.name + ' â $' + parseFloat(p.price).toFixed(2) + '/' + unit;
+o.text = p.name + ' — $' + parseFloat(p.price).toFixed(2) + '/' + unit;
 sel.appendChild(o);
 });
 if (prev) sel.value = prev;
@@ -659,10 +659,10 @@ const subEl = document.getElementById('sub-'+idx);
 if (price !== null && qty > 0) {
 const sub = price * qty; total += sub;
 if (subEl) subEl.textContent = '$' + sub.toFixed(2);
-} else { if (subEl) subEl.textContent = 'â'; }
+} else { if (subEl) subEl.textContent = '—'; }
 });
 const disp = document.getElementById('costDisplay');
-if (disp) disp.textContent = total > 0 ? '$' + total.toFixed(2) : 'â';
+if (disp) disp.textContent = total > 0 ? '$' + total.toFixed(2) : '—';
 }
 function refreshShapeDropdown() {
 document.querySelectorAll('.order-item-row').forEach(row => {
@@ -713,8 +713,8 @@ if (!items.length) { showToast('Please add at least one pasta item.', 'error'); 
 
 const totalCost = items.reduce((s,it) => s + it.subtotal, 0).toFixed(2);
 const totalBags = items.reduce((s,it) => s + it.quantity, 0);
-const shapeLabel = items.map(it => it.shape + ' Ã' + it.quantity).join(', ');
-const itemsList = items.map(it => 'â¢ ' + it.quantity + ' ' + (it.unit || 'bag') + (it.quantity !== 1 ? 's' : '') + ' ' + it.shape).join('\n');
+const shapeLabel = items.map(it => it.shape + ' ×' + it.quantity).join(', ');
+const itemsList = items.map(it => '• ' + it.quantity + ' ' + (it.unit || 'bag') + (it.quantity !== 1 ? 's' : '') + ' ' + it.shape).join('\n');
 
 const cfg = getConfig();
 const btn = document.getElementById('submitBtn');
@@ -724,13 +724,13 @@ const order = {
 id: Date.now(), orderDate, deliveryDate: deliveryVal, deliveryText,
 items, shape: shapeLabel, quantity: totalBags,
 pricePerBag: items.length === 1 ? items[0].pricePerBag : null,
-totalCost: parseFloat(totalCost), notes: notes || 'â',
+totalCost: parseFloat(totalCost), notes: notes || '—',
 submittedAt: new Date().toISOString()
 };
 const orders = getOrders(); orders.unshift(order); saveOrders(orders);
 
 if (cfg.pubkey && cfg.service && cfg.template) {
-btn.disabled = true; status.textContent = 'Sending emailâ¦';
+btn.disabled = true; status.textContent = 'Sending email…';
 try {
 emailjs.init(cfg.pubkey);
 await emailjs.send(cfg.service, cfg.template, {
@@ -744,7 +744,7 @@ total_cost: totalCost,
 notes: notes || 'None',
 location: cfg.location || 'Cornelly Restaurant Group'
 });
-showToast('â Order saved & email sent to production kitchen!');
+showToast('✅ Order saved & email sent to production kitchen!');
 status.textContent = '';
 } catch(err) {
 console.error(err);
@@ -753,7 +753,7 @@ status.textContent = '';
 }
 btn.disabled = false;
 } else {
-showToast('â  Order saved locally. Configure EmailJS in Settings to send emails.', 'warning');
+showToast('⚠ Order saved locally. Configure EmailJS in Settings to send emails.', 'warning');
 }
 resetOrderForm();
 }
@@ -803,7 +803,7 @@ return;
 }
 tbody.innerHTML = products.map(p => {
 const unit = getUnit(p.type);
-const tLabel = p.type ? (p.type === 'icecream' ? 'Ice Cream' : p.type.charAt(0).toUpperCase() + p.type.slice(1)) : 'â';
+const tLabel = p.type ? (p.type === 'icecream' ? 'Ice Cream' : p.type.charAt(0).toUpperCase() + p.type.slice(1)) : '—';
 return `
 <tr>
 <td><strong>${esc(p.name)}</strong></td>
@@ -894,7 +894,7 @@ const itemRows = lineItems.map(it => `
 <tr>
 <td style="padding:10px 14px;border-bottom:1px solid #f0ede8;">${esc(it.shape)}</td>
 <td style="padding:10px 14px;border-bottom:1px solid #f0ede8;text-align:center;">${it.quantity}</td>
-<td style="padding:10px 14px;border-bottom:1px solid #f0ede8;text-align:right;">${it.pricePerBag != null ? '$' + parseFloat(it.pricePerBag).toFixed(2) : 'â'}</td>
+<td style="padding:10px 14px;border-bottom:1px solid #f0ede8;text-align:right;">${it.pricePerBag != null ? '$' + parseFloat(it.pricePerBag).toFixed(2) : '—'}</td>
 <td style="padding:10px 14px;border-bottom:1px solid #f0ede8;text-align:right;font-weight:700;">$${parseFloat(it.subtotal || 0).toFixed(2)}</td>
 </tr>`).join('');
 sheet.innerHTML = `
@@ -935,9 +935,9 @@ sheet.innerHTML = `
 <div style="font-size:24px;font-weight:800;color:#1e3a2f;">$${parseFloat(o.totalCost).toFixed(2)}</div>
 </div>
 </div>
-${o.notes && o.notes !== 'â' ? `<div style="background:#f7f3ec;border-radius:8px;padding:14px 18px;margin-bottom:24px;"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#6b6b5e;margin-bottom:6px;">Special Notes</div><div style="font-size:13px;color:#2a2a22;">${esc(o.notes)}</div></div>` : ''}
+${o.notes && o.notes !== '—' ? `<div style="background:#f7f3ec;border-radius:8px;padding:14px 18px;margin-bottom:24px;"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#6b6b5e;margin-bottom:6px;">Special Notes</div><div style="font-size:13px;color:#2a2a22;">${esc(o.notes)}</div></div>` : ''}
 <div class="no-print" style="display:flex;gap:10px;justify-content:flex-end;padding-top:16px;border-top:1px solid #f0ede8;">
-<button onclick="printInvoice()" style="background:#1e3a2f;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">ð¨ Print Invoice</button>
+<button onclick="printInvoice()" style="background:#1e3a2f;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">🖨 Print Invoice</button>
 <button onclick="document.getElementById('invoice-modal').style.display='none'" style="background:transparent;border:1.5px solid #d4cfc8;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;color:#6b6b5e;">Close</button>
 </div>`;
 modal.style.display = 'flex';
@@ -968,9 +968,9 @@ function loadConfig() {
 const cfg = getConfig();
 const badge = document.getElementById('configStatusBadge');
 if (cfg.pubkey && cfg.service && cfg.template) {
-badge.className = 'config-status ok'; badge.textContent = 'â EmailJS configured';
+badge.className = 'config-status ok'; badge.textContent = '✓ EmailJS configured';
 } else {
-badge.className = 'config-status bad'; badge.textContent = 'â  EmailJS not configured';
+badge.className = 'config-status bad'; badge.textContent = '⚠ EmailJS not configured';
 }
 if (cfg.pubkey) document.getElementById('cfg-pubkey').value = cfg.pubkey;
 if (cfg.service) document.getElementById('cfg-service').value = cfg.service;
@@ -980,13 +980,13 @@ if (cfg.location) document.getElementById('cfg-location').value = cfg.location;
 async function testEmail() {
 const cfg = getConfig();
 if (!cfg.pubkey || !cfg.service || !cfg.template) { showToast('Save your EmailJS settings first.', 'error'); return; }
-showToast('Sending test emailâ¦');
+showToast('Sending test email…');
 try {
 emailjs.init(cfg.pubkey);
 await emailjs.send(cfg.service, cfg.template, {
-order_date: 'TEST â ' + new Date().toLocaleDateString(),
+order_date: 'TEST — ' + new Date().toLocaleDateString(),
 delivery_date: 'TEST',
-items_list: 'â¢ 1 bags Test Pasta',
+items_list: '• 1 bags Test Pasta',
 pasta_shape: 'Test Pasta',
 quantity: 1,
 price_per_bag: '0.00',
@@ -994,7 +994,7 @@ total_cost: '0.00',
 notes: 'This is a test email from the Pasta Order System.',
 location: cfg.location || 'Cornelly Restaurant Group'
 });
-showToast('â Test email sent! Check your inbox.');
+showToast('✅ Test email sent! Check your inbox.');
 } catch(err) {
 showToast('Test failed: ' + (err.text || err.message || 'unknown error'), 'error');
 }
@@ -1017,7 +1017,7 @@ Special Notes:
 
 Thank you,
 {{location}}`;
-navigator.clipboard.writeText(tpl).then(() => showToast('Template copied to clipboard!')).catch(() => showToast('Copy failed â please copy manually.', 'error'));
+navigator.clipboard.writeText(tpl).then(() => showToast('Template copied to clipboard!')).catch(() => showToast('Copy failed — please copy manually.', 'error'));
 }
 
 // DATA MANAGEMENT
