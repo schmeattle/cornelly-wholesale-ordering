@@ -841,8 +841,10 @@ function deleteOrder(id) {
 
 // INVOICE
 function viewInvoice(id) {
-  const o = getOrders().find(x => x.id === id);
+  const allOrders = getOrders(); // newest first
+  const o = allOrders.find(x => x.id === id);
   if (!o) return;
+  const invoiceNum = allOrders.length - 1 - allOrders.findIndex(x => x.id === id);
   const cfg = getConfig();
   const modal = document.getElementById('invoice-modal');
   const sheet = document.getElementById('invoice-sheet');
@@ -863,7 +865,7 @@ function viewInvoice(id) {
         <div style="font-size:13px;color:#6b6b5e;margin-top:4px;">${esc(cfg.location || 'Cornelly Restaurant Group')}</div>
       </div>
       <div style="text-align:right;font-size:12px;color:#6b6b5e;">
-        <div>Order #${o.id}</div>
+        <div>Order #${invoiceNum}</div>
         <div style="margin-top:2px;">Submitted: ${new Date(o.submittedAt||o.orderDate).toLocaleDateString()}</div>
       </div>
     </div>
