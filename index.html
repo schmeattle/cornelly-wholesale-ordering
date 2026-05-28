@@ -230,6 +230,21 @@ main { padding: 20px 16px 60px; }
 .form-grid { grid-template-columns: 1fr; }
 .form-grid .full { grid-column: 1; }
 }
+
+/* Sortable table headers */
+th.sortable { cursor:pointer; user-select:none; white-space:nowrap; }
+th.sortable:hover { color:var(--gold); }
+th.sortable .sort-icon { display:inline-block; margin-left:4px; opacity:0.5; font-size:11px; }
+th.sortable.sort-active .sort-icon { opacity:1; color:var(--gold); }
+/* Price cell inline edit */
+td.price-cell { cursor:pointer; }
+td.price-cell:hover { background:var(--gray-lt); border-radius:4px; }
+td.price-cell input[type=number] { width:72px; font-size:13px; padding:2px 4px; border:1px solid var(--gray); border-radius:4px; }
+/* Edit modal */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; display:flex; align-items:center; justify-content:center; }
+.modal-box { background:var(--white); border-radius:var(--radius); padding:28px 32px; min-width:300px; max-width:420px; width:90%; box-shadow:0 8px 32px rgba(0,0,0,0.25); }
+.modal-box h2 { margin:0 0 20px; font-size:18px; }
+.modal-actions { display:flex; gap:10px; margin-top:20px; }
 </style>
 </head>
 <body>
@@ -322,10 +337,10 @@ main { padding: 20px 16px 60px; }
 <table id="productsTable">
 <thead>
 <tr>
-<th>Product</th>
-<th>Type</th>
-<th>Price</th>
-<th>Added</th>
+<th class="sortable" onclick="sortProducts('name')" id="th-name">Product <span class="sort-icon">↕</span></th>
+<th class="sortable" onclick="sortProducts('type')" id="th-type">Type <span class="sort-icon">↕</span></th>
+<th class="sortable" onclick="sortProducts('price')" id="th-price">Price <span class="sort-icon">↕</span></th>
+<th class="sortable" onclick="sortProducts('addedAt')" id="th-addedAt">Added <span class="sort-icon">↕</span></th>
 <th></th>
 </tr>
 </thead>
@@ -444,7 +459,8 @@ Items Ordered:
 
 Total Cost: ${{total_cost}}
 
-Special Notes:({{notes}}
+Special Notes:
+{{notes}}
 
 Thank you,
 {{location}}</div>
@@ -782,36 +798,134 @@ saveProducts(getProducts().filter(p => p.name !== name));
 renderProducts(); refreshShapeDropdown();
 showToast(name + ' removed.');
 }
+// Sort state
+let _prodSort = { col: 'addedAt', dir: 'desc' };
+let _renderedProducts = [];
+function sortProducts(col) {
+if (_prodSort.col === col) {
+_prodSort.dir = _prodSort.dir === 'asc' ? 'desc' : 'asc';
+} else {
+_prodSort.col = col;
+_prodSort.dir = 'asc';
+}
+renderProducts();
+}
+
+// Edit product modal
+let _editingProductName = null;
 function editProduct(name) {
 const products = getProducts();
 const p = products.find(x => x.name === name);
 if (!p) return;
+_editingProductName = name;
+document.getElementById('editProductName').value = p.name;
+document.getElementById('editProductType').value = p.type || 'pasta';
+document.getElementById('editProductPriceInput').value = parseFloat(p.price).toFixed(2);
+updateEditPriceLabel();
+document.getElementById('editProductModal').style.display = 'flex';
+}
+function closeEditModal() {
+document.getElementById('editProductModal').style.display = 'none';
+_editingProductName = null;
+}
+function updateEditPriceLabel() {
+const type = document.getElementById('editProductType').value;
+document.getElementById('editProductPriceLabel').textContent = 'Price per ' + unitLabel(type) + ' ($)';
+}
+function saveEditProduct() {
+const newName = document.getElementById('editProductName').value.trim();
+const newType = document.getElementById('editProductType').value;
+const newPrice = parseFloat(document.getElementById('editProductPriceInput').value);
+if (!newName) { showToast('Please enter a product name.', 'error'); return; }
+if (isNaN(newPrice) || newPrice < 0) { showToast('Invalid price.', 'error'); return; }
+const products = getProducts();
+const idx = products.findIndex(x => x.name === _editingProductName);
+if (idx === -1) { showToast('Product not found.', 'error'); return; }
+const nameChanged = newName !== _editingProductName;
+if (nameChanged && products.find(x => x.name.toLowerCase() === newName.toLowerCase())) {
+showToast('A product with that name already exists.', 'error'); return;
+}
+products[idx].name = newName;
+products[idx].type = newType;
+products[idx].price = newPrice;
+saveProducts(products);
+closeEditModal();
+renderProducts(); refreshShapeDropdown();
+showToast('Updated: ' + newName);
+}
+
+// Inline price edit
+function startInlineEdit(cell) {
+if (cell.querySelector('input')) return;
+const idx = parseInt(cell.getAttribute('data-idx'));
+const p = _renderedProducts[idx];
+if (!p) return;
 const unit = getUnit(p.type);
-const newPrice = prompt('New price per ' + unit + ' for "' + name + '":', p.price);
-if (newPrice === null) return;
-const val = parseFloat(newPrice);
-if (isNaN(val) || val < 0) { showToast('Invalid price.','error'); return; }
-p.price = val; saveProducts(products); renderProducts(); refreshShapeDropdown();
-showToast('Price updated for ' + name);
+cell.onclick = null;
+cell.innerHTML = '';
+const inp = document.createElement('input');
+inp.type = 'number'; inp.min = '0'; inp.step = '0.01';
+inp.value = parseFloat(p.price).toFixed(2);
+inp.style.cssText = 'width:72px;font-size:13px;padding:2px 4px;border:1px solid var(--gray);border-radius:4px;';
+inp.addEventListener('blur', () => saveInlinePrice(p.name, inp.value));
+inp.addEventListener('keydown', e => {
+if (e.key === 'Enter') inp.blur();
+if (e.key === 'Escape') { e.preventDefault(); renderProducts(); }
+});
+const slash = document.createTextNode(' / ' + unit);
+cell.appendChild(inp); cell.appendChild(slash);
+inp.focus(); inp.select();
+}
+function saveInlinePrice(name, rawVal) {
+const val = parseFloat(rawVal);
+if (isNaN(val) || val < 0) { renderProducts(); showToast('Invalid price.', 'error'); return; }
+const products = getProducts();
+const p = products.find(x => x.name === name);
+if (!p) return;
+p.price = val;
+saveProducts(products);
+renderProducts(); refreshShapeDropdown();
+showToast('Price updated.');
 }
 function renderProducts() {
 const tbody = document.getElementById('productsBody');
 const products = getProducts();
 if (!products.length) {
 tbody.innerHTML = '<tr class="no-data"><td colspan="5">No products yet. Add your first product above.</td></tr>';
+_renderedProducts = [];
 return;
 }
-tbody.innerHTML = products.map(p => {
+// Update sort indicators
+['name','type','price','addedAt'].forEach(col => {
+const th = document.getElementById('th-' + col);
+if (!th) return;
+th.classList.toggle('sort-active', _prodSort.col === col);
+const icon = th.querySelector('.sort-icon');
+if (icon) icon.textContent = _prodSort.col === col ? (_prodSort.dir === 'asc' ? '↑' : '↓') : '↕';
+});
+// Sort
+const sorted = [...products].sort((a, b) => {
+let av, bv;
+if (_prodSort.col === 'name') { av = a.name.toLowerCase(); bv = b.name.toLowerCase(); }
+else if (_prodSort.col === 'type') { av = (a.type||'').toLowerCase(); bv = (b.type||'').toLowerCase(); }
+else if (_prodSort.col === 'price') { av = parseFloat(a.price||0); bv = parseFloat(b.price||0); }
+else { av = a.addedAt||''; bv = b.addedAt||''; }
+if (av < bv) return _prodSort.dir === 'asc' ? -1 : 1;
+if (av > bv) return _prodSort.dir === 'asc' ? 1 : -1;
+return 0;
+});
+_renderedProducts = sorted;
+tbody.innerHTML = sorted.map((p, i) => {
 const unit = getUnit(p.type);
 const tLabel = p.type ? (p.type === 'icecream' ? 'Ice Cream' : p.type.charAt(0).toUpperCase() + p.type.slice(1)) : '—';
 return `
 <tr>
 <td><strong>${esc(p.name)}</strong></td>
 <td style="color:var(--text-lt);font-size:12px;">${tLabel}</td>
-<td>$${parseFloat(p.price).toFixed(2)} / ${unit}</td>
+<td class="price-cell" data-idx="${i}" onclick="startInlineEdit(this)" title="Click to edit price">$${parseFloat(p.price).toFixed(2)} / ${unit}</td>
 <td style="color:var(--text-lt);font-size:12px;">${new Date(p.addedAt).toLocaleDateString()}</td>
 <td>
-<button class="btn btn-sm btn-outline" onclick="editProduct('${esc(p.name)}')">Edit Price</button>
+<button class="btn btn-sm btn-outline" onclick="editProduct('${esc(p.name)}')">Edit Item</button>
 <button class="btn btn-sm btn-danger" style="margin-left:6px;" onclick="deleteProduct('${esc(p.name)}')">Remove</button>
 </td>
 </tr>`;
@@ -864,7 +978,7 @@ tbody.innerHTML = orders.map(o => `
 <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.shape)}"><strong>${esc(o.shape)}</strong></td>
 <td>${o.quantity}</td>
 <td><strong>$${parseFloat(o.totalCost).toFixed(2)}</strong></td>
-<td style="font-size:12px;color:var(--text-lt);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.notes)}">${esc(o.notes)}</td>
+<td style="font-size:12px;color:var(--text-lt);max-width:160px;white-space:nowraw;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.notes)}">${esc(o.notes)}</td>
 <td style="white-space:nowrap;">
 <button class="btn btn-sm btn-outline" onclick="viewInvoice(${o.id})" style="margin-right:6px;">Invoice</button>
 <button class="btn btn-sm btn-danger" onclick="deleteOrder(${o.id})">Delete</button>
@@ -1054,5 +1168,35 @@ if (e.target === this) this.style.display = 'none';
 });
 });
 </script>
+
+<!-- EDIT PRODUCT MODAL -->
+<div id="editProductModal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeEditModal()">
+<div class="modal-box">
+<h2>Edit Item</h2>
+<div class="inline-form" style="flex-direction:column;gap:12px;">
+<div class="field">
+<label>Product Name</label>
+<input type="text" id="editProductName" />
+</div>
+<div class="field">
+<label>Type</label>
+<select id="editProductType" onchange="updateEditPriceLabel()">
+<option value="pasta">Pasta</option>
+<option value="icecream">Ice Cream</option>
+<option value="cookies">Cookies</option>
+<option value="bread">Bread</option>
+</select>
+</div>
+<div class="field">
+<label id="editProductPriceLabel">Price per Bag ($)</label>
+<input type="number" id="editProductPriceInput" min="0" step="0.01" />
+</div>
+</div>
+<div class="modal-actions">
+<button class="btn btn-gold" onclick="saveEditProduct()">Save Changes</button>
+<button class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+</div>
+</div>
+</div>
 </body>
 </html>
