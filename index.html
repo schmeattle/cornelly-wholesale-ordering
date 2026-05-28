@@ -175,7 +175,7 @@
     }
     .filter-bar input[type="date"]:focus { border-color: var(--green2); }
 
-    .summary-strip { dislay: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+    .summary-strip { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
     .summary-chip {
       background: var(--green); color: #fff; border-radius: 8px; padding: 10px 18px;
       display: flex; flex-direction: column; gap: 2px;
@@ -828,4 +828,190 @@ function renderHistory() {
       <td style="font-size:12px;color:var(--text-lt);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(o.notes)}">${esc(o.notes)}</td>
       <td style="white-space:nowrap;">
         <button class="btn btn-sm btn-outline" onclick="viewInvoice(${o.id})" style="margin-right:6px;">Invoice</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteOrder(${o
+        <button class="btn btn-sm btn-danger" onclick="deleteOrder(${o.id})">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+function deleteOrder(id) {
+  if (!confirm('Delete this order? This cannot be undone.')) return;
+  saveOrders(getOrders().filter(o => o.id !== id));
+  renderHistory();
+  showToast('Order deleted.');
+}
+
+// INVOICE
+function viewInvoice(id) {
+  const o = getOrders().find(x => x.id === id);
+  if (!o) return;
+  const cfg = getConfig();
+  const modal = document.getElementById('invoice-modal');
+  const sheet = document.getElementById('invoice-sheet');
+  const lineItems = (o.items && o.items.length)
+    ? o.items
+    : [{ shape: o.shape, quantity: o.quantity, pricePerBag: o.pricePerBag, subtotal: o.totalCost }];
+  const itemRows = lineItems.map(it => `
+    <tr>
+      <td style="padding:10px 14px;border-bottom:1px solid #f0ede8;">${esc(it.shape)}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #f0ede8;text-align:center;">${it.quantity}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #f0ede8;text-align:right;">${it.pricePerBag != null ? '$' + parseFloat(it.pricePerBag).toFixed(2) : '—'}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #f0ede8;text-align:right;font-weight:700;">$${parseFloat(it.subtotal || 0).toFixed(2)}</td>
+    </tr>`).join('');
+  sheet.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid #e8d5a3;">
+      <div>
+        <div style="font-size:22px;font-weight:800;color:#1e3a2f;letter-spacing:-.3px;">Pasta Order Invoice</div>
+        <div style="font-size:13px;color:#6b6b5e;margin-top:4px;">${esc(cfg.location || 'Cornelly Restaurant Group')}</div>
+      </div>
+      <div style="text-align:right;font-size:12px;color:#6b6b5e;">
+        <div>Order #${o.id}</div>
+        <div style="margin-top:2px;">Submitted: ${new Date(o.submittedAt||o.orderDate).toLocaleDateString()}</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+      <div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#6b6b5e;">Order Date</div>
+        <div style="font-size:14px;margin-top:4px;color:#2a2a22;">${formatDisplay(o.orderDate)}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#6b6b5e;">Delivery Date</div>
+        <div style="font-size:14px;margin-top:4px;color:#2a2a22;">${esc(o.deliveryText || o.deliveryDate)}</div>
+      </div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+      <thead>
+        <tr style="background:#1e3a2f;color:#fff;">
+          <th style="padding:10px 14px;text-align:left;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;border-radius:6px 0 0 0;">Pasta Shape</th>
+          <th style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Bags</th>
+          <th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Price/Bag</th>
+          <th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;border-radius:0 6px 0 0;">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>${itemRows}</tbody>
+    </table>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:24px;">
+      <div style="background:#f7f3ec;border:1.5px solid #e8d5a3;border-radius:8px;padding:12px 20px;text-align:right;">
+        <div style="font-size:12px;color:#6b6b5e;font-weight:600;text-transform:uppercase;letter-spacing:.4px;">Total</div>
+        <div style="font-size:24px;font-weight:800;color:#1e3a2f;">$${parseFloat(o.totalCost).toFixed(2)}</div>
+      </div>
+    </div>
+    ${o.notes && o.notes !== '—' ? `<div style="background:#f7f3ec;border-radius:8px;padding:14px 18px;margin-bottom:24px;"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#6b6b5e;margin-bottom:6px;">Special Notes</div><div style="font-size:13px;color:#2a2a22;">${esc(o.notes)}</div></div>` : ''}
+    <div class="no-print" style="display:flex;gap:10px;justify-content:flex-end;padding-top:16px;border-top:1px solid #f0ede8;">
+      <button onclick="printInvoice()" style="background:#1e3a2f;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">🖨 Print Invoice</button>
+      <button onclick="document.getElementById('invoice-modal').style.display='none'" style="background:transparent;border:1.5px solid #d4cfc8;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;color:#6b6b5e;">Close</button>
+    </div>`;
+  modal.style.display = 'flex';
+}
+function printInvoice() {
+  const sheet = document.getElementById('invoice-sheet').cloneNode(true);
+  const btnRow = sheet.querySelector('.no-print');
+  if (btnRow) btnRow.remove();
+  const win = window.open('', '_blank', 'width=750,height=1000');
+  win.document.write('<!DOCTYPE html><html><head><title>Pasta Order Invoice</title><style>body{font-family:"Segoe UI",system-ui,sans-serif;margin:48px;color:#2a2a22;}*{box-sizing:border-box;}table{width:100%;border-collapse:collapse;}</style></head><body>' + sheet.innerHTML + '</body></html>');
+  win.document.close();
+  win.focus();
+  setTimeout(function(){ win.print(); }, 400);
+}
+
+// SETTINGS CONFIG
+function saveConfig() {
+  const pubkey   = document.getElementById('cfg-pubkey').value.trim();
+  const service  = document.getElementById('cfg-service').value.trim();
+  const template = document.getElementById('cfg-template').value.trim();
+  const location = document.getElementById('cfg-location').value.trim();
+  if (!pubkey || !service || !template) { showToast('Please fill in all three EmailJS fields.', 'error'); return; }
+  saveConfig2({ pubkey, service, template, location });
+  loadConfig();
+  showToast('Settings saved!');
+}
+function loadConfig() {
+  const cfg = getConfig();
+  const badge = document.getElementById('configStatusBadge');
+  if (cfg.pubkey && cfg.service && cfg.template) {
+    badge.className = 'config-status ok'; badge.textContent = '✓ EmailJS configured';
+  } else {
+    badge.className = 'config-status bad'; badge.textContent = '⚠ EmailJS not configured';
+  }
+  if (cfg.pubkey)   document.getElementById('cfg-pubkey').value   = cfg.pubkey;
+  if (cfg.service)  document.getElementById('cfg-service').value  = cfg.service;
+  if (cfg.template) document.getElementById('cfg-template').value = cfg.template;
+  if (cfg.location) document.getElementById('cfg-location').value = cfg.location;
+}
+async function testEmail() {
+  const cfg = getConfig();
+  if (!cfg.pubkey || !cfg.service || !cfg.template) { showToast('Save your EmailJS settings first.', 'error'); return; }
+  showToast('Sending test email…');
+  try {
+    emailjs.init(cfg.pubkey);
+    await emailjs.send(cfg.service, cfg.template, {
+      order_date: 'TEST — ' + new Date().toLocaleDateString(),
+      delivery_date: 'TEST',
+      items_list: '• 1 bags Test Pasta',
+      pasta_shape: 'Test Pasta',
+      quantity: 1,
+      price_per_bag: '0.00',
+      total_cost: '0.00',
+      notes: 'This is a test email from the Pasta Order System.',
+      location: cfg.location || 'Cornelly Restaurant Group'
+    });
+    showToast('✅ Test email sent! Check your inbox.');
+  } catch(err) {
+    showToast('Test failed: ' + (err.text || err.message || 'unknown error'), 'error');
+  }
+}
+function copyTemplate() {
+  const tpl = `Hi Production Kitchen,
+
+A new pasta order has been placed from {{location}}.
+
+Order Date:     {{order_date}}
+Delivery Date:  {{delivery_date}}
+
+Items Ordered:
+{{items_list}}
+
+Total Cost:     ${{total_cost}}
+
+Special Notes:
+{{notes}}
+
+Thank you,
+{{location}}`;
+  navigator.clipboard.writeText(tpl).then(() => showToast('Template copied to clipboard!')).catch(() => showToast('Copy failed — please copy manually.', 'error'));
+}
+
+// DATA MANAGEMENT
+function exportData() {
+  const data = { products: getProducts(), orders: getOrders(), config: getConfig(), exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'pasta-orders-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  showToast('Data exported!');
+}
+function clearAllData() {
+  if (!confirm('Clear ALL orders, products, and settings? This cannot be undone.')) return;
+  localStorage.removeItem('pasta_products');
+  localStorage.removeItem('pasta_orders');
+  localStorage.removeItem('pasta_config');
+  renderProducts(); renderHistory(); loadConfig();
+  showToast('All data cleared.', 'warning');
+}
+
+// ESCAPE HELPER
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// INIT
+document.addEventListener('DOMContentLoaded', () => {
+  initOrderForm();
+  renderProducts();
+  document.getElementById('invoice-modal').addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
+  });
+});
+</script>
+</body>
+</html>
