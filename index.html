@@ -778,7 +778,8 @@ async function submitOrder() {
     if (!shape && !(qty > 0)) return;
     if (!shape) { showToast('Please select a pasta shape for each item.','error'); invalid=true; return; }
     if (!qty || qty < 1) { showToast('Please enter a valid quantity for each item.','error'); invalid=true; return; }
-    items.push({ shape, quantity: qty, pricePerBag: price, subtotal: parseFloat((price*qty).toFixed(2)) });
+    const unit = document.getElementById('shape-'+idx)?.options[document.getElementById('shape-'+idx)?.selectedIndex]?.dataset?.unit || 'unit';
+    items.push({ shape, quantity: qty, pricePerBag: price, subtotal: parseFloat((price*qty).toFixed(2)), unit });
   });
   if (invalid) return;
   if (!items.length) { showToast('Please add at least one pasta item.', 'error'); return; }
@@ -786,7 +787,7 @@ async function submitOrder() {
   const totalCost  = items.reduce((s,it) => s + it.subtotal, 0).toFixed(2);
   const totalBags  = items.reduce((s,it) => s + it.quantity, 0);
   const shapeLabel = items.map(it => it.shape + ' \xd7' + it.quantity).join(', ');
-  const itemsList  = items.map(it => '• ' + it.quantity + ' bags ' + it.shape).join('\n');
+  const itemsList  = items.map(it => '• ' + it.quantity + ' ' + (it.unit||'unit') + (it.quantity !== 1 ? 's' : '') + ' ' + it.shape).join('\n');
 
   const cfg = getConfig();
   const btn = document.getElementById('submitBtn');
