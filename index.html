@@ -7,23 +7,23 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='7' y='1' width='2.5' height='12' rx='1.2' fill='%231e3a2f'/%3E%3Crect x='11.5' y='1' width='2.5' height='12' rx='1.2' fill='%231e3a2f'/%3E%3Crect x='16' y='1' width='2.5' height='12' rx='1.2' fill='%231e3a2f'/%3E%3Crect x='20.5' y='1' width='2.5' height='12' rx='1.2' fill='%231e3a2f'/%3E%3Crect x='7' y='13' width='16' height='2.5' fill='%231e3a2f'/%3E%3Crect x='14.5' y='15.5' width='3' height='15.5' rx='1.2' fill='%231e3a2f'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='7' y='1' width='2.5' height='12' rx='1.2' fill='%231a4f8a'/%3E%3Crect x='11.5' y='1' width='2.5' height='12' rx='1.2' fill='%231a4f8a'/%3E%3Crect x='16' y='1' width='2.5' height='12' rx='1.2' fill='%231a4f8a'/%3E%3Crect x='20.5' y='1' width='2.5' height='12' rx='1.2' fill='%231a4f8a'/%3E%3Crect x='7' y='13' width='16' height='2.5' fill='%231a4f8a'/%3E%3Crect x='14.5' y='15.5' width='3' height='15.5' rx='1.2' fill='%231a4f8a'/%3E%3C/svg%3E">
   <style>
     :root {
-      --green:   #1e3a2f;
-      --green2:  #2d5540;
+      --green:   #1a4f8a;
+      --green2:  #2a6ab5;
       --gold:    #c8a45a;
-      --gold-lt: #e8d5a3;
-      --cream:   #f7f3ec;
+      --gold-lt: #dfd0a8;
+      --cream:   #f2f5fa;
       --white:   #ffffff;
-      --gray-lt: #f0ede8;
-      --gray:    #d4cfc8;
-      --text:    #2a2a22;
-      --text-lt: #6b6b5e;
+      --gray-lt: #e8edf5;
+      --gray:    #c8d0dc;
+      --text:    #1a2333;
+      --text-lt: #5a6578;
       --red:     #c0392b;
       --green-ok:#2e7d52;
       --radius:  10px;
-      --shadow:  0 2px 12px rgba(0,0,0,.10);
+      --shadow:  0 2px 12px rgba(26,79,138,.12);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -240,10 +240,10 @@
 <body>
 
 <!-- Password gate -->
-<div id="gate" style="position:fixed;inset:0;z-index:9999;background:#1e3a2f;display:flex;align-items:center;justify-content:center;">
+<div id="gate" style="position:fixed;inset:0;z-index:9999;background:#1a4f8a;display:flex;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:12px;padding:40px 36px;text-align:center;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.3);">
     <div style="font-size:32px;margin-bottom:12px;">🍝</div>
-    <h2 style="color:#1e3a2f;font-family:sans-serif;margin-bottom:6px;">Cornelly Wholesale</h2>
+    <h2 style="color:#1a4f8a;font-family:sans-serif;margin-bottom:6px;">Cornelly Wholesale</h2>
     <p style="color:#6b6b5e;font-size:13px;font-family:sans-serif;margin-bottom:24px;">Enter the access password to continue</p>
     <input id="gate-input" type="password" placeholder="Password" style="width:100%;padding:10px 14px;border:1.5px solid #d4cfc8;border-radius:7px;font-size:15px;margin-bottom:12px;outline:none;box-sizing:border-box;" />
     <button onclick="checkGate()" style="width:100%;padding:11px;background:#1e3a2f;color:#fff;border:none;border-radius:7px;font-size:15px;font-weight:600;cursor:pointer;">Enter</button>
