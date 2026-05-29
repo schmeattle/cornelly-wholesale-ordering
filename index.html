@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pasta Order System — Cornelly Restaurant Group</title>
+  <title>Wholesale Order System — Cornelly Restaurant Group</title>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -156,6 +156,9 @@
     td { padding: 11px 14px; border-bottom: 1px solid var(--gray-lt); color: var(--text); }
     tr:hover td { background: var(--gray-lt); }
     tr:last-child td { border-bottom: none; }
+    th.sortable { cursor: pointer; user-select: none; }
+    th.sortable:hover { background: #2d5540; }
+    .sort-icon { font-size: 10px; opacity: .6; margin-left: 2px; }
     .no-data td { text-align: center; color: var(--text-lt); padding: 32px; font-style: italic; }
     .no-data:hover td { background: transparent; }
 
@@ -238,9 +241,9 @@
 
 <header>
   <div class="brand">
-    <span class="brand-icon">🍝</span>
+    <span class="brand-icon">🛒</span>
     <div class="brand-text">
-      <h1>Pasta Order System</h1>
+      <h1>Wholesale Order System</h1>
       <p>Cornelly Restaurant Group</p>
     </div>
   </div>
@@ -256,7 +259,7 @@
 
   <!-- ORDER FORM -->
   <section id="page-order" class="page active">
-    <div class="page-title">Place a Pasta Order</div>
+    <div class="page-title">Place a Wholesale Order</div>
     <div class="page-sub">Orders are emailed to the production kitchen automatically on submission.</div>
     <div class="card">
       <h2>Order Details</h2>
@@ -270,7 +273,7 @@
           <select id="deliveryDate"></select>
         </div>
         <div class="field full">
-          <label>Pasta Items</label>
+          <label>Items</label>
           <div id="orderItems" class="order-items"></div>
           <button class="btn btn-sm btn-outline" onclick="addOrderRow()" style="margin-top:10px;">+ Add Another Item</button>
         </div>
@@ -296,27 +299,62 @@
 
   <!-- PRODUCTS -->
   <section id="page-products" class="page">
-    <div class="page-title">Pasta Products</div>
-    <div class="page-sub">Manage available pasta shapes and their price per bag.</div>
+    <div class="page-title">Product Catalog</div>
+    <div class="page-sub">Manage all wholesale products, types, and pricing.</div>
+
     <div class="card">
       <h2>Add New Product</h2>
-      <div class="inline-form">
-        <div class="field" style="flex:2">
-          <label>Pasta Shape Name</label>
-          <input type="text" id="newProductName" placeholder="e.g. Tagliatelle, Rigatoni…" />
+      <div class="inline-form" style="flex-wrap:wrap;">
+        <div class="field" style="flex:2;min-width:160px;">
+          <label>Product Name</label>
+          <input type="text" id="newProductName" placeholder="e.g. Sourdough, Rigatoni…" />
         </div>
-        <div class="field" style="flex:1">
-          <label>Price per Bag ($)</label>
+        <div class="field" style="flex:1;min-width:140px;">
+          <label>Product Type</label>
+          <select id="newProductType" onchange="updatePriceLabel()">
+            <option value="">— Select Type —</option>
+          </select>
+        </div>
+        <div class="field" style="flex:1;min-width:130px;">
+          <label id="priceLabelField">Price ($)</label>
           <input type="number" id="newProductPrice" min="0" step="0.01" placeholder="0.00" />
         </div>
-        <button class="btn btn-gold" onclick="addProduct()" style="margin-bottom:1px;">+ Add Product</button>
+        <button class="btn btn-gold" onclick="addProduct()" style="align-self:flex-end;margin-bottom:1px;">+ Add Product</button>
       </div>
+    </div>
+
+    <div class="card">
+      <h2>Manage Product Types</h2>
+      <p style="font-size:13px;color:var(--text-lt);margin-bottom:14px;">Each type defines the unit used when ordering (e.g. Pasta → per bag). Add custom types here anytime.</p>
+      <div class="inline-form" style="margin-bottom:16px;">
+        <div class="field" style="flex:2;min-width:140px;">
+          <label>Type Name</label>
+          <input type="text" id="newTypeName" placeholder="e.g. Juice, Cheese…" />
+        </div>
+        <div class="field" style="flex:1;min-width:120px;">
+          <label>Unit</label>
+          <input type="text" id="newTypeUnit" placeholder="e.g. bottle, lb…" />
+        </div>
+        <button class="btn btn-outline" onclick="addProductType()" style="align-self:flex-end;margin-bottom:1px;">+ Add Type</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Type Name</th><th>Unit</th><th></th></tr></thead>
+          <tbody id="typesBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>All Products <span style="float:right;font-size:11px;font-weight:400;color:var(--text-lt);text-transform:none;letter-spacing:0;">Click column headers to sort</span></h2>
       <div class="table-wrap">
         <table id="productsTable">
           <thead>
             <tr>
-              <th>Pasta Shape</th>
-              <th>Price per Bag</th>
+              <th class="sortable" onclick="sortProducts('name')" id="th-name">Product Name <span class="sort-icon">↕</span></th>
+              <th class="sortable" onclick="sortProducts('type')" id="th-type">Type <span class="sort-icon">↕</span></th>
+              <th>Unit</th>
+              <th class="sortable" onclick="sortProducts('price')" id="th-price">Price <span class="sort-icon">↕</span></th>
               <th>Added</th>
               <th></th>
             </tr>
@@ -498,7 +536,17 @@ const __fbApp = firebase.initializeApp(__firebaseConfig);
 const __db = firebase.firestore();
 
 // IN-MEMORY CACHE (Firestore is source of truth; cache enables synchronous reads)
-const __cache = { products: [], orders: [], config: {} };
+const __cache = { products: [], orders: [], config: {}, productTypes: [] };
+
+const DEFAULT_PRODUCT_TYPES = [
+  { name: 'Pasta',      unit: 'bag'    },
+  { name: 'Ice Cream',  unit: 'pint'   },
+  { name: 'Bread',      unit: 'loaf'   },
+  { name: 'Cookie',     unit: 'cookie' },
+  { name: 'Sauce',      unit: 'jar'    },
+  { name: 'Produce',    unit: 'lb'     },
+  { name: 'Beverage',   unit: 'bottle' },
+];
 
 // DATA HELPERS
 function getProducts() { return __cache.products; }
@@ -516,18 +564,26 @@ function saveConfig2(o) {
   __cache.config = o;
   __db.collection('data').doc('config').set(o).catch(e => console.error('saveConfig2:', e));
 }
+function getProductTypes() { return __cache.productTypes.length ? __cache.productTypes : DEFAULT_PRODUCT_TYPES; }
+function saveProductTypes(a) {
+  __cache.productTypes = a;
+  __db.collection('data').doc('productTypes').set({ items: a }).catch(e => console.error('saveProductTypes:', e));
+}
 
 // Load all data from Firestore into cache at startup
 async function initFirebase() {
   try {
-    const [prodSnap, ordSnap, cfgSnap] = await Promise.all([
+    const [prodSnap, ordSnap, cfgSnap, typesSnap] = await Promise.all([
       __db.collection('data').doc('products').get(),
       __db.collection('data').doc('orders').get(),
-      __db.collection('data').doc('config').get()
+      __db.collection('data').doc('config').get(),
+      __db.collection('data').doc('productTypes').get()
     ]);
-    if (prodSnap.exists) __cache.products = prodSnap.data().items || [];
-    if (ordSnap.exists)  __cache.orders   = ordSnap.data().items  || [];
-    if (cfgSnap.exists)  __cache.config   = cfgSnap.data()        || {};
+    if (prodSnap.exists)  __cache.products     = prodSnap.data().items  || [];
+    if (ordSnap.exists)   __cache.orders       = ordSnap.data().items   || [];
+    if (cfgSnap.exists)   __cache.config       = cfgSnap.data()         || {};
+    if (typesSnap.exists) __cache.productTypes = typesSnap.data().items || DEFAULT_PRODUCT_TYPES;
+    else                  __cache.productTypes = DEFAULT_PRODUCT_TYPES;
   } catch(e) {
     console.error('Firebase init error:', e);
   }
@@ -551,7 +607,7 @@ function showPage(name) {
   document.getElementById('page-' + name).classList.add('active');
   document.getElementById('nav-' + name).classList.add('active');
   if (name === 'history')  renderHistory();
-  if (name === 'products') renderProducts();
+  if (name === 'products') { renderProducts(); renderTypes(); populateTypeDropdown(); }
   if (name === 'settings') loadConfig();
   if (name === 'order')    populateDeliveryDates();
 }
@@ -614,13 +670,13 @@ function addOrderRow() {
   row.id = 'order-row-' + idx;
   row.innerHTML = `
     <div class="field">
-      <label>Pasta Shape</label>
+      <label>Product</label>
       <select id="shape-${idx}" onchange="updateCost()">
         <option value="">— Select —</option>
       </select>
     </div>
     <div class="field">
-      <label>Bags</label>
+      <label>Qty</label>
       <input type="number" id="qty-${idx}" min="1" step="1" placeholder="0" oninput="updateCost()" style="width:100%"/>
     </div>
     <span class="item-subtotal" id="sub-${idx}">—</span>
@@ -639,7 +695,8 @@ function _fillRowDropdown(idx) {
   getProducts().forEach(p => {
     const o = document.createElement('option');
     o.value = p.name; o.dataset.price = p.price;
-    o.text = p.name + ' — $' + parseFloat(p.price).toFixed(2) + '/bag';
+    o.text = p.name + ' — $' + parseFloat(p.price).toFixed(2) + '/' + (p.unit||'unit');
+    o.dataset.unit = p.unit || 'unit';
     sel.appendChild(o);
   });
   if (prev) sel.value = prev;
@@ -768,17 +825,91 @@ async function submitOrder() {
   resetOrderForm();
 }
 
+// PRODUCT TYPES
+function updatePriceLabel() {
+  const sel = document.getElementById('newProductType');
+  const types = getProductTypes();
+  const chosen = types.find(t => t.name === sel.value);
+  document.getElementById('priceLabelField').textContent = chosen ? 'Price per ' + chosen.unit + ' ($)' : 'Price ($)';
+}
+function populateTypeDropdown() {
+  const sel = document.getElementById('newProductType');
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">\u2014 Select Type \u2014</option>';
+  getProductTypes().forEach(t => {
+    const o = document.createElement('option');
+    o.value = t.name; o.textContent = t.name + ' (per ' + t.unit + ')';
+    sel.appendChild(o);
+  });
+  if (prev) sel.value = prev;
+  updatePriceLabel();
+}
+function addProductType() {
+  const name = document.getElementById('newTypeName').value.trim();
+  const unit = document.getElementById('newTypeUnit').value.trim();
+  if (!name) { showToast('Please enter a type name.','error'); return; }
+  if (!unit) { showToast('Please enter a unit (e.g. bag, lb, bottle).','error'); return; }
+  const types = getProductTypes();
+  if (types.find(t => t.name.toLowerCase() === name.toLowerCase())) {
+    showToast('That type already exists.','error'); return;
+  }
+  const updated = [...types, { name, unit }];
+  saveProductTypes(updated);
+  document.getElementById('newTypeName').value = '';
+  document.getElementById('newTypeUnit').value = '';
+  renderTypes(); populateTypeDropdown();
+  showToast('Product type added: ' + name);
+}
+function deleteProductType(name) {
+  if (!confirm('Delete type "' + name + '"?')) return;
+  saveProductTypes(getProductTypes().filter(t => t.name !== name));
+  renderTypes(); populateTypeDropdown();
+  showToast('Type removed: ' + name);
+}
+function renderTypes() {
+  const tbody = document.getElementById('typesBody');
+  if (!tbody) return;
+  const types = getProductTypes();
+  tbody.innerHTML = types.map(t => `
+    <tr>
+      <td><strong>${esc(t.name)}</strong></td>
+      <td>${esc(t.unit)}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="deleteProductType('${esc(t.name)}')">Remove</button></td>
+    </tr>`).join('');
+}
+
 // PRODUCTS
+let _productSort = { col: 'name', dir: 'asc' };
+function sortProducts(col) {
+  if (_productSort.col === col) {
+    _productSort.dir = _productSort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    _productSort.col = col; _productSort.dir = 'asc';
+  }
+  ['name','type','price'].forEach(c => {
+    const th = document.getElementById('th-' + c);
+    if (th) { th.classList.remove('sort-asc','sort-desc'); }
+  });
+  const th = document.getElementById('th-' + col);
+  if (th) th.classList.add('sort-' + _productSort.dir);
+  renderProducts();
+}
 function addProduct() {
   const name  = document.getElementById('newProductName').value.trim();
+  const type  = document.getElementById('newProductType').value;
   const price = parseFloat(document.getElementById('newProductPrice').value);
-  if (!name) { showToast('Please enter a pasta shape name.','error'); return; }
+  if (!name)  { showToast('Please enter a product name.','error'); return; }
+  if (!type)  { showToast('Please select a product type.','error'); return; }
   if (isNaN(price) || price < 0) { showToast('Please enter a valid price.','error'); return; }
+  const types = getProductTypes();
+  const chosen = types.find(t => t.name === type);
+  const unit = chosen ? chosen.unit : 'unit';
   const products = getProducts();
   if (products.find(p => p.name.toLowerCase() === name.toLowerCase())) {
     showToast('A product with that name already exists.','error'); return;
   }
-  products.push({ name, price, addedAt: new Date().toISOString() });
+  products.push({ name, type, unit, price, addedAt: new Date().toISOString() });
   saveProducts(products);
   document.getElementById('newProductName').value = '';
   document.getElementById('newProductPrice').value = '';
@@ -795,7 +926,7 @@ function editProduct(name) {
   const products = getProducts();
   const p = products.find(x => x.name === name);
   if (!p) return;
-  const newPrice = prompt('New price per bag for "' + name + '":', p.price);
+  const newPrice = prompt('New price per ' + (p.unit||'unit') + ' for "' + name + '":', p.price);
   if (newPrice === null) return;
   const val = parseFloat(newPrice);
   if (isNaN(val) || val < 0) { showToast('Invalid price.','error'); return; }
@@ -804,17 +935,28 @@ function editProduct(name) {
 }
 function renderProducts() {
   const tbody = document.getElementById('productsBody');
-  const products = getProducts();
+  if (!tbody) return;
+  let products = [...getProducts()];
+  const { col, dir } = _productSort;
+  products.sort((a, b) => {
+    let av = col === 'price' ? parseFloat(a[col]||0) : (a[col]||'').toLowerCase();
+    let bv = col === 'price' ? parseFloat(b[col]||0) : (b[col]||'').toLowerCase();
+    if (av < bv) return dir === 'asc' ? -1 : 1;
+    if (av > bv) return dir === 'asc' ? 1 : -1;
+    return 0;
+  });
   if (!products.length) {
-    tbody.innerHTML = '<tr class="no-data"><td colspan="4">No products yet. Add your first pasta shape above.</td></tr>';
+    tbody.innerHTML = '<tr class="no-data"><td colspan="6">No products yet. Add your first product above.</td></tr>';
     return;
   }
   tbody.innerHTML = products.map(p => `
     <tr>
       <td><strong>${esc(p.name)}</strong></td>
-      <td>$${parseFloat(p.price).toFixed(2)}</td>
+      <td>${esc(p.type||'\u2014')}</td>
+      <td style="color:var(--text-lt);">${esc(p.unit||'unit')}</td>
+      <td>$${parseFloat(p.price).toFixed(2)}<span style="font-size:11px;color:var(--text-lt);">/${esc(p.unit||'unit')}</span></td>
       <td style="color:var(--text-lt);font-size:12px;">${new Date(p.addedAt).toLocaleDateString()}</td>
-      <td>
+      <td style="white-space:nowrap;">
         <button class="btn btn-sm btn-outline" onclick="editProduct('${esc(p.name)}')">Edit Price</button>
         <button class="btn btn-sm btn-danger" style="margin-left:6px;" onclick="deleteProduct('${esc(p.name)}')">Remove</button>
       </td>
@@ -1052,7 +1194,9 @@ function esc(s) {
 document.addEventListener('DOMContentLoaded', async () => {
   await initFirebase();
   initOrderForm();
+  populateTypeDropdown();
   renderProducts();
+  renderTypes();
   loadConfig();
   document.getElementById('invoice-modal').addEventListener('click', function(e) {
     if (e.target === this) this.style.display = 'none';
