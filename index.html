@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -238,6 +238,39 @@
   </style>
 </head>
 <body>
+
+<!-- Password gate -->
+<div id="gate" style="position:fixed;inset:0;z-index:9999;background:#1e3a2f;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:40px 36px;text-align:center;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.3);">
+    <div style="font-size:32px;margin-bottom:12px;">🍝</div>
+    <h2 style="color:#1e3a2f;font-family:sans-serif;margin-bottom:6px;">Cornelly Wholesale</h2>
+    <p style="color:#6b6b5e;font-size:13px;font-family:sans-serif;margin-bottom:24px;">Enter the access password to continue</p>
+    <input id="gate-input" type="password" placeholder="Password" style="width:100%;padding:10px 14px;border:1.5px solid #d4cfc8;border-radius:7px;font-size:15px;margin-bottom:12px;outline:none;box-sizing:border-box;" />
+    <button onclick="checkGate()" style="width:100%;padding:11px;background:#1e3a2f;color:#fff;border:none;border-radius:7px;font-size:15px;font-weight:600;cursor:pointer;">Enter</button>
+    <p id="gate-error" style="color:#c0392b;font-size:13px;font-family:sans-serif;margin-top:10px;display:none;">Incorrect password.</p>
+  </div>
+</div>
+<script>
+  (function(){
+    if(sessionStorage.getItem('gateOk')==='1'){
+      document.getElementById('gate').style.display='none';
+    }
+    document.getElementById('gate-input').addEventListener('keydown',function(e){
+      if(e.key==='Enter') checkGate();
+    });
+  })();
+  async function checkGate(){
+    const pw = document.getElementById('gate-input').value;
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+    const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    if(hash==='79737ac46dad121166483e084a0727e5d6769fb47fa9b0b627eba4107e696078'){
+      sessionStorage.setItem('gateOk','1');
+      document.getElementById('gate').style.display='none';
+    } else {
+      document.getElementById('gate-error').style.display='block';
+    }
+  }
+</script>
 
 <header>
   <div class="brand">
