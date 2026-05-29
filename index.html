@@ -324,28 +324,6 @@
     </div>
 
     <div class="card">
-      <h2>Manage Product Types</h2>
-      <p style="font-size:13px;color:var(--text-lt);margin-bottom:14px;">Each type defines the unit used when ordering (e.g. Pasta → per bag). Add custom types here anytime.</p>
-      <div class="inline-form" style="margin-bottom:16px;">
-        <div class="field" style="flex:2;min-width:140px;">
-          <label>Type Name</label>
-          <input type="text" id="newTypeName" placeholder="e.g. Juice, Cheese…" />
-        </div>
-        <div class="field" style="flex:1;min-width:120px;">
-          <label>Unit</label>
-          <input type="text" id="newTypeUnit" placeholder="e.g. bottle, lb…" />
-        </div>
-        <button class="btn btn-outline" onclick="addProductType()" style="align-self:flex-end;margin-bottom:1px;">+ Add Type</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Type Name</th><th>Unit</th><th></th></tr></thead>
-          <tbody id="typesBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card">
       <h2>All Products <span style="float:right;font-size:11px;font-weight:400;color:var(--text-lt);text-transform:none;letter-spacing:0;">Click column headers to sort</span></h2>
       <div class="table-wrap">
         <table id="productsTable">
@@ -361,6 +339,33 @@
           </thead>
           <tbody id="productsBody"></tbody>
         </table>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;">
+      <button onclick="toggleTypesPanel()" id="typesPanelBtn" style="width:100%;background:none;border:none;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:inherit;text-align:left;">
+        <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--green2);">Manage Product Types</span>
+        <span id="typesPanelArrow" style="font-size:12px;color:var(--text-lt);transition:transform .2s;">▼</span>
+      </button>
+      <div id="typesPanelBody" style="display:none;padding:0 24px 20px;border-top:2px solid var(--gold-lt);">
+        <p style="font-size:13px;color:var(--text-lt);margin:14px 0;">Each type defines the unit used when ordering (e.g. Pasta → per bag). Add custom types here anytime.</p>
+        <div class="inline-form" style="margin-bottom:16px;">
+          <div class="field" style="flex:2;min-width:140px;">
+            <label>Type Name</label>
+            <input type="text" id="newTypeName" placeholder="e.g. Juice, Cheese…" />
+          </div>
+          <div class="field" style="flex:1;min-width:120px;">
+            <label>Unit</label>
+            <input type="text" id="newTypeUnit" placeholder="e.g. bottle, lb…" />
+          </div>
+          <button class="btn btn-outline" onclick="addProductType()" style="align-self:flex-end;margin-bottom:1px;">+ Add Type</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Type Name</th><th>Unit</th><th></th></tr></thead>
+            <tbody id="typesBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
@@ -826,6 +831,13 @@ async function submitOrder() {
 }
 
 // PRODUCT TYPES
+function toggleTypesPanel() {
+  const body = document.getElementById('typesPanelBody');
+  const arrow = document.getElementById('typesPanelArrow');
+  const open = body.style.display === 'none';
+  body.style.display = open ? 'block' : 'none';
+  arrow.style.transform = open ? 'rotate(180deg)' : '';
+}
 function updatePriceLabel() {
   const sel = document.getElementById('newProductType');
   const types = getProductTypes();
@@ -943,7 +955,8 @@ function renderProducts() {
     let bv = col === 'price' ? parseFloat(b[col]||0) : (b[col]||'').toLowerCase();
     if (av < bv) return dir === 'asc' ? -1 : 1;
     if (av > bv) return dir === 'asc' ? 1 : -1;
-    return 0;
+    // Secondary sort: alphabetical by name within same group
+    return (a.name||'').toLowerCase() < (b.name||'').toLowerCase() ? -1 : 1;
   });
   if (!products.length) {
     tbody.innerHTML = '<tr class="no-data"><td colspan="6">No products yet. Add your first product above.</td></tr>';
