@@ -926,7 +926,7 @@ function renderTypes() {
 }
 
 // PRODUCTS
-let _productSort = { col: 'name', dir: 'asc' };
+let _productSort = { col: 'pasta-first', dir: 'asc' };
 function sortProducts(col) {
   if (_productSort.col === col) {
     _productSort.dir = _productSort.dir === 'asc' ? 'desc' : 'asc';
@@ -985,11 +985,16 @@ function renderProducts() {
   let products = [...getProducts()];
   const { col, dir } = _productSort;
   products.sort((a, b) => {
+    if (col === 'pasta-first') {
+      const ap = (a.type||'').toLowerCase() === 'pasta', bp = (b.type||'').toLowerCase() === 'pasta';
+      if (ap && !bp) return -1;
+      if (!ap && bp) return 1;
+      return (a.name||'').toLowerCase() < (b.name||'').toLowerCase() ? -1 : 1;
+    }
     let av = col === 'price' ? parseFloat(a[col]||0) : (a[col]||'').toLowerCase();
     let bv = col === 'price' ? parseFloat(b[col]||0) : (b[col]||'').toLowerCase();
     if (av < bv) return dir === 'asc' ? -1 : 1;
     if (av > bv) return dir === 'asc' ? 1 : -1;
-    // Secondary sort: alphabetical by name within same group
     return (a.name||'').toLowerCase() < (b.name||'').toLowerCase() ? -1 : 1;
   });
   if (!products.length) {
