@@ -1291,7 +1291,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   ];
 
   const isMobile = window.innerWidth < 768;
-  const COUNT = isMobile ? 2 : 6;
+  const COUNT = isMobile ? 6 : 6;
   const container = document.getElementById('food-bg');
 
   function rand(min, max) { return min + Math.random() * (max - min); }
@@ -1327,7 +1327,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     el.addEventListener('animationiteration', () => {
       const next = IMAGES[randInt(0, IMAGES.length - 1)];
       el.src = next;
-      const newSize = rand(320, 480);
+      const newSize = isMobile ? rand(60, 90) : rand(320, 480);
       const newX = rand(0, window.innerWidth - newSize);
       const newY = rand(0, window.innerHeight - newSize);
       el.style.left = newX + 'px';
