@@ -338,6 +338,25 @@
     <div class="page-sub">Manage all wholesale products, types, and pricing.</div>
 
     <div class="card">
+      <h2>All Products <span style="float:right;font-size:11px;font-weight:400;color:var(--text-lt);text-transform:none;letter-spacing:0;">Click column headers to sort</span></h2>
+      <div class="table-wrap">
+        <table id="productsTable">
+          <thead>
+            <tr>
+              <th class="sortable" onclick="sortProducts('name')" id="th-name">Product Name <span class="sort-icon">↕</span></th>
+              <th class="sortable" onclick="sortProducts('type')" id="th-type">Type <span class="sort-icon">↕</span></th>
+              <th>Unit</th>
+              <th class="sortable" onclick="sortProducts('price')" id="th-price">Price <span class="sort-icon">↕</span></th>
+              <th>Added</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="productsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
       <h2>Add New Product</h2>
       <div class="inline-form" style="flex-wrap:wrap;">
         <div class="field" style="flex:2;min-width:160px;">
@@ -355,25 +374,6 @@
           <input type="number" id="newProductPrice" min="0" step="0.01" placeholder="0.00" />
         </div>
         <button class="btn btn-gold" onclick="addProduct()" style="align-self:flex-end;margin-bottom:1px;">+ Add Product</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>All Products <span style="float:right;font-size:11px;font-weight:400;color:var(--text-lt);text-transform:none;letter-spacing:0;">Click column headers to sort</span></h2>
-      <div class="table-wrap">
-        <table id="productsTable">
-          <thead>
-            <tr>
-              <th class="sortable" onclick="sortProducts('name')" id="th-name">Product Name <span class="sort-icon">↕</span></th>
-              <th class="sortable" onclick="sortProducts('type')" id="th-type">Type <span class="sort-icon">↕</span></th>
-              <th>Unit</th>
-              <th class="sortable" onclick="sortProducts('price')" id="th-price">Price <span class="sort-icon">↕</span></th>
-              <th>Added</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="productsBody"></tbody>
-        </table>
       </div>
     </div>
 
