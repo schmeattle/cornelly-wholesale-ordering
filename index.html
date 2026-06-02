@@ -28,6 +28,8 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body { max-width: 100%; overflow-x: hidden; }
+
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       background: var(--cream);
@@ -227,31 +229,43 @@
     }
 
     @media (max-width: 600px) {
-      header { padding: 10px 14px; flex-direction: column; gap: 8px; height: auto; }
+      header { padding: 10px 14px; flex-direction: column; gap: 8px; height: auto; width: 100%; }
       .brand-text h1 { font-size: 14px; }
       .brand-text p { font-size: 10px; }
       nav { gap: 2px; flex-wrap: wrap; justify-content: center; width: 100%; }
-      nav button { padding: 7px 10px; font-size: 11px; flex: 1; min-width: 70px; text-align: center; }
-      main { padding: 16px 12px 60px; max-width: 100%; }
-      .card { padding: 16px 14px; margin-bottom: 16px; }
+      nav button { padding: 7px 8px; font-size: 11px; flex: 1 1 auto; min-width: 60px; max-width: none; text-align: center; }
+      main { padding: 14px 12px 60px; width: 100%; }
+      .card { padding: 14px 12px; margin-bottom: 14px; width: 100%; }
       .card h2 { font-size: 12px; }
       .form-grid { grid-template-columns: 1fr; gap: 12px; }
       .form-grid .full { grid-column: 1; }
-      .order-item-row { grid-template-columns: 1fr 80px 56px 28px; gap: 6px; padding: 10px 10px 8px; }
+      /* Order rows: stack product+qty on top, subtotal+remove below */
+      .order-item-row {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto;
+        gap: 8px;
+        padding: 10px 10px 8px;
+      }
+      .order-item-row .field:first-child { grid-column: 1 / -1; } /* product full width */
+      .order-item-row .field:nth-child(2) { grid-column: 1; }     /* qty left */
+      .order-item-row .item-subtotal { grid-column: 2; align-self: center; padding-bottom: 0; }
+      .order-item-row .item-remove { grid-column: 2; grid-row: 1; justify-self: end; }
       .btn { padding: 10px 16px; font-size: 13px; }
-      .btn-row { gap: 8px; }
+      .btn-row { gap: 8px; flex-wrap: wrap; }
+      .btn-row .btn { flex: 1 1 auto; justify-content: center; }
       .inline-form { flex-direction: column; gap: 10px; }
       .inline-form .field { min-width: 0; width: 100%; }
       .inline-form .btn { width: 100%; justify-content: center; }
       .filter-bar { gap: 6px; }
-      .period-btn { padding: 6px 10px; font-size: 11px; }
+      .period-btn { padding: 6px 8px; font-size: 11px; }
       .summary-strip { gap: 8px; }
-      .summary-chip { padding: 8px 12px; }
+      .summary-chip { padding: 8px 12px; flex: 1 1 auto; }
       .summary-chip .chip-val { font-size: 16px; }
-      .table-wrap { font-size: 12px; }
-      th, td { padding: 8px 8px; }
+      .table-wrap { font-size: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      th, td { padding: 7px 6px; white-space: normal; }
       .cost-display .cost-value { font-size: 18px; }
       .page-title { font-size: 18px; }
+      .page-sub { font-size: 12px; }
     }
   </style>
 </head>
