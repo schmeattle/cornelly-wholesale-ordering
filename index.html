@@ -293,13 +293,23 @@
   })();
   async function checkGate(){
     const pw = document.getElementById('gate-input').value;
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
-    const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-    if(hash==='79737ac46dad121166483e084a0727e5d6769fb47fa9b0b627eba4107e696078'){
-      sessionStorage.setItem('gateOk','1');
-      document.getElementById('gate').style.display='none';
-    } else {
-      document.getElementById('gate-error').style.display='block';
+    try {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+      const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+      if(hash==='79737ac46dad121166483e084a0727e5d6769fb47fa9b0b627eba4107e696078'){
+        sessionStorage.setItem('gateOk','1');
+        document.getElementById('gate').style.display='none';
+      } else {
+        document.getElementById('gate-error').style.display='block';
+      }
+    } catch(e) {
+      // Fallback for browsers without crypto.subtle (e.g. HTTP context or old browser)
+      if(pw === '98765'){
+        sessionStorage.setItem('gateOk','1');
+        document.getElementById('gate').style.display='none';
+      } else {
+        document.getElementById('gate-error').style.display='block';
+      }
     }
   }
 </script>
