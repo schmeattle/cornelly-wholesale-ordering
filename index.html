@@ -485,7 +485,7 @@
         </div>
         <div class="summary-chip">
           <span class="chip-val" id="sumBags">—</span>
-          <span class="chip-lbl">Bags Ordered</span>
+          <span class="chip-lbl">Units Ordered</span>
         </div>
         <div class="summary-chip">
           <span class="chip-val" id="sumCost">—</span>
@@ -498,8 +498,8 @@
             <tr>
               <th>Order Date</th>
               <th>Delivery Date</th>
-              <th>Pasta Shape</th>
-              <th>Bags</th>
+              <th>Item</th>
+              <th>Qty</th>
               <th>Total Cost</th>
               <th>Notes</th>
               <th></th>
@@ -869,7 +869,7 @@ async function submitOrder() {
     const qty   = parseInt(document.getElementById('qty-'+idx)?.value, 10);
     const price = _getRowPrice(idx);
     if (!shape && !(qty > 0)) return;
-    if (!shape) { showToast('Please select a pasta shape for each item.','error'); invalid=true; return; }
+    if (!shape) { showToast('Please select an item for each row.','error'); invalid=true; return; }
     if (!qty || qty < 1) { showToast('Please enter a valid quantity for each item.','error'); invalid=true; return; }
     const unit = document.getElementById('shape-'+idx)?.options[document.getElementById('shape-'+idx)?.selectedIndex]?.dataset?.unit || 'unit';
     items.push({ shape, quantity: qty, pricePerBag: price, subtotal: parseFloat((price*qty).toFixed(2)), unit });
@@ -1164,7 +1164,7 @@ function viewInvoice(id) {
   sheet.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid #e8d5a3;">
       <div>
-        <div style="font-size:22px;font-weight:800;color:#1e3a2f;letter-spacing:-.3px;">Pasta Order Invoice</div>
+        <div style="font-size:22px;font-weight:800;color:#1e3a2f;letter-spacing:-.3px;">Order Invoice</div>
         <div style="font-size:13px;color:#6b6b5e;margin-top:4px;">${esc(cfg.location || 'Cornelly Restaurant Group')}</div>
       </div>
       <div style="text-align:right;font-size:12px;color:#6b6b5e;">
@@ -1185,9 +1185,9 @@ function viewInvoice(id) {
     <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
       <thead>
         <tr style="background:#1e3a2f;color:#fff;">
-          <th style="padding:10px 14px;text-align:left;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;border-radius:6px 0 0 0;">Pasta Shape</th>
-          <th style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Bags</th>
-          <th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Price/Bag</th>
+          <th style="padding:10px 14px;text-align:left;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;border-radius:6px 0 0 0;">Item</th>
+          <th style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Qty</th>
+          <th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Price/Unit</th>
           <th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;border-radius:0 6px 0 0;">Subtotal</th>
         </tr>
       </thead>
@@ -1211,7 +1211,7 @@ function printInvoice() {
   const btnRow = sheet.querySelector('.no-print');
   if (btnRow) btnRow.remove();
   const win = window.open('', '_blank', 'width=750,height=1000');
-  win.document.write('<!DOCTYPE html><html><head><title>Pasta Order Invoice</title><style>body{font-family:"Segoe UI",system-ui,sans-serif;margin:48px;color:#2a2a22;}*{box-sizing:border-box;}table{width:100%;border-collapse:collapse;}</style></head><body>' + sheet.innerHTML + '</body></html>');
+  win.document.write('<!DOCTYPE html><html><head><title>Order Invoice</title><style>body{font-family:"Segoe UI",system-ui,sans-serif;margin:48px;color:#2a2a22;}*{box-sizing:border-box;}table{width:100%;border-collapse:collapse;}</style></head><body>' + sheet.innerHTML + '</body></html>');
   win.document.close();
   win.focus();
   setTimeout(function(){ win.print(); }, 400);
@@ -1426,3 +1426,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
+
