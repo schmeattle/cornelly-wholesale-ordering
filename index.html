@@ -698,17 +698,24 @@ function showToast(msg, type='') {
 }
 
 // NAVIGATION
-function showPage(name) {
+function showPage(name, pushHash=true) {
   if (name === 'settings' && !sessionStorage.getItem('settings_auth')) { showSettingsGate(); return; }
+  const valid = ['order','products','history','settings'];
+  if (!valid.includes(name)) name = 'order';
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   document.getElementById('nav-' + name).classList.add('active');
+  if (pushHash && location.hash !== '#' + name) history.pushState(null, '', '#' + name);
   if (name === 'history')  renderHistory();
   if (name === 'products') { renderProducts(); renderTypes(); populateTypeDropdown(); }
   if (name === 'settings') loadConfig();
   if (name === 'order')    populateDeliveryDates();
 }
+window.addEventListener('hashchange', () => {
+  const name = location.hash.replace('#','') || 'order';
+  showPage(name, false);
+});
 
 // SETTINGS GATE
 const SETTINGS_HASH = '20f3765880a5c269b747e1e906054a4b4a3a991259f1e16b5dde4742cec2319a';
@@ -1320,6 +1327,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('invoice-modal').addEventListener('click', function(e) {
     if (e.target === this) this.style.display = 'none';
   });
+  const initialPage = location.hash.replace('#','') || 'order';
+  showPage(initialPage, false);
 });
 </script>
 
