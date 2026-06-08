@@ -800,11 +800,17 @@ function _fillRowDropdown(idx) {
   if (!sel) return;
   const prev = sel.value;
   sel.innerHTML = '<option value="">— Select —</option>';
-  getProducts().filter(p => p.inStock !== false).forEach(p => {
+  getProducts().forEach(p => {
     const o = document.createElement('option');
     o.value = p.name; o.dataset.price = p.price;
-    o.text = p.name + ' — $' + parseFloat(p.price).toFixed(2) + '/' + (p.unit||'unit');
     o.dataset.unit = p.unit || 'unit';
+    if (p.inStock === false) {
+      o.text = p.name + ' — Out of Stock';
+      o.disabled = true;
+      o.style.color = '#aaa';
+    } else {
+      o.text = p.name + ' — $' + parseFloat(p.price).toFixed(2) + '/' + (p.unit||'unit');
+    }
     sel.appendChild(o);
   });
   if (prev) sel.value = prev;
