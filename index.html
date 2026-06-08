@@ -800,7 +800,7 @@ function _fillRowDropdown(idx) {
   if (!sel) return;
   const prev = sel.value;
   sel.innerHTML = '<option value="">— Select —</option>';
-  getProducts().forEach(p => {
+  getProducts().filter(p => p.inStock !== false).forEach(p => {
     const o = document.createElement('option');
     o.value = p.name; o.dataset.price = p.price;
     o.text = p.name + ' — $' + parseFloat(p.price).toFixed(2) + '/' + (p.unit||'unit');
