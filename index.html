@@ -1046,6 +1046,7 @@ function toggleStock(name) {
   p.inStock = p.inStock === false ? true : false;
   saveProducts(products);
   renderProducts();
+  refreshShapeDropdown();
   showToast(name + ' marked ' + (p.inStock ? 'in stock' : 'out of stock') + '.');
 }
 function deleteProduct(name) {
