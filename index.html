@@ -130,6 +130,8 @@
     .btn-sm { padding: 7px 14px; font-size: 12px; }
     .btn-danger { background: var(--red); color: #fff; }
     .btn-danger:hover { opacity: .88; }
+    .btn-stock-in { background: var(--green2); color: #fff; }
+    .btn-stock-in:hover { opacity: .88; }
     .btn-outline { background: transparent; border: 1.5px solid var(--green2); color: var(--green2); }
     .btn-outline:hover { background: var(--green2); color: #fff; }
     .btn:disabled { opacity: .45; cursor: not-allowed; }
@@ -400,6 +402,7 @@
               <th>Unit</th>
               <th class="sortable" onclick="sortProducts('price')" id="th-price">Price <span class="sort-icon">↕</span></th>
               <th>Added</th>
+              <th>Stock</th>
               <th></th>
             </tr>
           </thead>
@@ -1036,6 +1039,15 @@ function addProduct() {
   renderProducts(); refreshShapeDropdown();
   showToast('Product added: ' + name);
 }
+function toggleStock(name) {
+  const products = getProducts();
+  const p = products.find(x => x.name === name);
+  if (!p) return;
+  p.inStock = p.inStock === false ? true : false;
+  saveProducts(products);
+  renderProducts();
+  showToast(name + ' marked ' + (p.inStock ? 'in stock' : 'out of stock') + '.');
+}
 function deleteProduct(name) {
   if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
   saveProducts(getProducts().filter(p => p.name !== name));
@@ -1072,7 +1084,7 @@ function renderProducts() {
     return (a.name||'').toLowerCase() < (b.name||'').toLowerCase() ? -1 : 1;
   });
   if (!products.length) {
-    tbody.innerHTML = '<tr class="no-data"><td colspan="6">No products yet. Add your first product above.</td></tr>';
+    tbody.innerHTML = '<tr class="no-data"><td colspan="7">No products yet. Add your first product above.</td></tr>';
     return;
   }
   tbody.innerHTML = products.map(p => `
@@ -1082,6 +1094,7 @@ function renderProducts() {
       <td style="color:var(--text-lt);">${esc(p.unit||'unit')}</td>
       <td>$${parseFloat(p.price).toFixed(2)}<span style="font-size:11px;color:var(--text-lt);">/${esc(p.unit||'unit')}</span></td>
       <td style="color:var(--text-lt);font-size:12px;">${new Date(p.addedAt).toLocaleDateString()}</td>
+      <td><button class="btn btn-sm ${p.inStock === false ? 'btn-danger' : 'btn-stock-in'}" onclick="toggleStock('${esc(p.name)}')">${p.inStock === false ? 'Out of Stock' : 'In Stock'}</button></td>
       <td style="white-space:nowrap;">
         <button class="btn btn-sm btn-outline" onclick="editProduct('${esc(p.name)}')">Edit Price</button>
         <button class="btn btn-sm btn-danger" style="margin-left:6px;" onclick="deleteProduct('${esc(p.name)}')">Remove</button>
