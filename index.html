@@ -334,6 +334,9 @@
       <p>Cornelly Restaurant Group</p>
     </div>
   </div>
+  <div id="return-btn-wrap" style="display:none;align-items:center;justify-content:center;">
+    <a id="return-btn" href="#" style="display:inline-block;padding:0.2rem 0.7rem;border:1.5px solid rgba(255,255,255,0.45);border-radius:20px;color:#fff;text-decoration:none;font-size:0.72rem;font-weight:600;letter-spacing:0.03em;transition:background 0.15s,border-color 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.borderColor='#fff'" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(255,255,255,0.45)'">Return to Dashboard</a>
+  </div>
   <nav>
     <button id="nav-order"    class="active" onclick="showPage('order')">New Order</button>
     <button id="nav-products"               onclick="showPage('products')">Products</button>
@@ -1238,7 +1241,25 @@ function printInvoice() {
   const btnRow = sheet.querySelector('.no-print');
   if (btnRow) btnRow.remove();
   const win = window.open('', '_blank', 'width=750,height=1000');
-  win.document.write('<!DOCTYPE html><html><head><title>Order Invoice</title><style>body{font-family:"Segoe UI",system-ui,sans-serif;margin:48px;color:#2a2a22;}*{box-sizing:border-box;}table{width:100%;border-collapse:collapse;}</style></head><body>' + sheet.innerHTML + '</body></html>');
+  win.document.write('<!DOCTYPE html><html><head><title>Order Invoice</title><style>body{font-family:"Segoe UI",system-ui,sans-serif;margin:48px;color:#2a2a22;}*{box-sizing:border-box;}table{width:100%;border-collapse:collapse;}</style></head><body>' + sheet.innerHTML + '
+<script>
+(function() {
+  var DASHBOARDS = {
+    qa: 'https://cornelly-qa-dashboard.netlify.app',
+    sa: 'https://cornelly-sa-dashboard.netlify.app'
+  };
+  var params = new URLSearchParams(window.location.search);
+  var from = params.get('from');
+  if (from && DASHBOARDS[from]) sessionStorage.setItem('returnDashboard', DASHBOARDS[from]);
+  var dest = sessionStorage.getItem('returnDashboard');
+  if (dest) {
+    var wrap = document.getElementById('return-btn-wrap');
+    var btn  = document.getElementById('return-btn');
+    if (wrap && btn) { btn.href = dest; wrap.style.display = 'flex'; }
+  }
+})();
+</script>
+</body></html>');
   win.document.close();
   win.focus();
   setTimeout(function(){ win.print(); }, 400);
@@ -1450,6 +1471,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.addEventListener('DOMContentLoaded', initBg);
   } else {
     initBg();
+  }
+})();
+</script>
+
+<script>
+(function() {
+  var DASHBOARDS = {
+    qa: 'https://cornelly-qa-dashboard.netlify.app',
+    sa: 'https://cornelly-sa-dashboard.netlify.app'
+  };
+  var params = new URLSearchParams(window.location.search);
+  var from = params.get('from');
+  if (from && DASHBOARDS[from]) sessionStorage.setItem('returnDashboard', DASHBOARDS[from]);
+  var dest = sessionStorage.getItem('returnDashboard');
+  if (dest) {
+    var wrap = document.getElementById('return-btn-wrap');
+    var btn  = document.getElementById('return-btn');
+    if (wrap && btn) { btn.href = dest; wrap.style.display = 'flex'; }
   }
 })();
 </script>
