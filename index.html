@@ -1251,12 +1251,10 @@ function printInvoice() {
   var params = new URLSearchParams(window.location.search);
   var from = params.get('from');
   if (from && DASHBOARDS[from]) sessionStorage.setItem('returnDashboard', DASHBOARDS[from]);
-  var dest = sessionStorage.getItem('returnDashboard');
-  if (dest) {
-    var wrap = document.getElementById('return-btn-wrap');
-    var btn  = document.getElementById('return-btn');
-    if (wrap && btn) { btn.href = dest; wrap.style.display = 'flex'; }
-  }
+  var dest = sessionStorage.getItem('returnDashboard') || 'https://cornellydashboard.com';
+  var wrap = document.getElementById('return-btn-wrap');
+  var btn  = document.getElementById('return-btn');
+  if (wrap && btn) { btn.href = dest; wrap.style.display = 'flex'; }
 })();
 </script>
 </body></html>');
@@ -1484,12 +1482,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   var params = new URLSearchParams(window.location.search);
   var from = params.get('from');
   if (from && DASHBOARDS[from]) sessionStorage.setItem('returnDashboard', DASHBOARDS[from]);
-  var dest = sessionStorage.getItem('returnDashboard');
-  if (dest) {
-    var wrap = document.getElementById('return-btn-wrap');
-    var btn  = document.getElementById('return-btn');
-    if (wrap && btn) { btn.href = dest; wrap.style.display = 'flex'; }
-  }
+  var dest = sessionStorage.getItem('returnDashboard') || 'https://cornellydashboard.com';
+  var wrap = document.getElementById('return-btn-wrap');
+  var btn  = document.getElementById('return-btn');
+  if (wrap && btn) { btn.href = dest; wrap.style.display = 'flex'; }
 })();
 </script>
 </body>
