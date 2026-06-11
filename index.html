@@ -1241,23 +1241,7 @@ function printInvoice() {
   const btnRow = sheet.querySelector('.no-print');
   if (btnRow) btnRow.remove();
   const win = window.open('', '_blank', 'width=750,height=1000');
-  win.document.write('<!DOCTYPE html><html><head><title>Order Invoice</title><style>body{font-family:"Segoe UI",system-ui,sans-serif;margin:48px;color:#2a2a22;}*{box-sizing:border-box;}table{width:100%;border-collapse:collapse;}</style></head><body>' + sheet.innerHTML + '
-<script>
-(function() {
-  var DASHBOARDS = {
-    qa: 'https://cornelly-qa-dashboard.netlify.app',
-    sa: 'https://cornelly-sa-dashboard.netlify.app'
-  };
-  var params = new URLSearchParams(window.location.search);
-  var from = params.get('from');
-  if (from && DASHBOARDS[from]) sessionStorage.setItem('returnDashboard', DASHBOARDS[from]);
-  var dest = sessionStorage.getItem('returnDashboard') || 'https://cornellydashboard.com';
-  var wrap = document.getElementById('return-btn-wrap');
-  var btn  = document.getElementById('return-btn');
-  if (wrap && btn) { btn.href = dest; wrap.style.display = 'flex'; }
-})();
-</script>
-</body></html>');
+  win.document.write('<!DOCTYPE html><html><head><title>Order Invoice</title><style>body{font-family:"Segoe UI",system-ui,sans-serif;margin:48px;color:#2a2a22;}*{box-sizing:border-box;}table{width:100%;border-collapse:collapse;}</style></head><body>' + sheet.innerHTML + '</body></html>');
   win.document.close();
   win.focus();
   setTimeout(function(){ win.print(); }, 400);
@@ -1470,6 +1454,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   } else {
     initBg();
   }
+})();
+</script>
+
+<script>
+(function() {
+  var DASHBOARDS = {
+    qa: 'https://cornelly-qa-dashboard.netlify.app',
+    sa: 'https://cornelly-sa-dashboard.netlify.app'
+  };
+  var params = new URLSearchParams(window.location.search);
+  var from = params.get('from');
+  if (from && DASHBOARDS[from]) sessionStorage.setItem('returnDashboard', DASHBOARDS[from]);
+  var dest = sessionStorage.getItem('returnDashboard') || 'https://cornellydashboard.com';
+  var wrap = document.getElementById('return-btn-wrap');
+  var btn  = document.getElementById('return-btn');
+  if (wrap && btn) { btn.href = dest; wrap.style.display = 'flex'; }
 })();
 </script>
 
